@@ -1,0 +1,55 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = "mongodb+srv://bishan:bBZZnbX3bBaEJ5bZ@learning.i40bkxc.mongodb.net/insta"
+}
+
+enum PostType {
+  INDEPENDENT
+  GROUPED
+}
+
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+  SCHEDULED
+}
+
+model User {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  email     String   @unique
+  posts     Post[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Post {
+  id            String        @id @default(auto()) @map("_id") @db.ObjectId
+  userId        String        @db.ObjectId
+  user          User          @relation(fields: [userId], references: [id])
+  type          PostType
+  status        PostStatus    @default(DRAFT)
+  title         String?
+  description   String?
+  templateId    String?
+  postItems     PostItem[]
+  generatedImage String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+}
+
+model PostItem {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  parentPostId String?  @db.ObjectId
+  parentPost   Post?    @relation(fields: [parentPostId], references: [id])
+  imageUrl     String?
+  caption      String?
+  order        Int?
+  templateId   String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}

@@ -10,9 +10,11 @@
   },
   "dependencies": {
     "@prisma/client": "^6.19.0",
+    "cloudinary": "^2.8.0",
     "handlebars": "^4.7.8",
     "next": "16.0.1",
     "prisma": "^6.19.0",
+    "puppeteer": "^24.29.1",
     "react": "19.2.0",
     "react-dom": "19.2.0"
   },

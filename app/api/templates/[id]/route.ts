@@ -3,11 +3,10 @@ export const runtime = "nodejs";
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import Handlebars from "handlebars";
-import puppeteer from "puppeteer-core";
-import chromium from "@sparticuz/chromium";
 import fs from "fs/promises";
 import path from "path";
 import { uploadToBbImage } from "@/app/lib/uploadToBbImage";
+import nodeHtmlToImage from "node-html-to-image";
 
 const prisma = new PrismaClient();
 
@@ -65,30 +64,21 @@ export async function POST(
     const compiled = Handlebars.compile(hbsSource);
     const renderedHTML = compiled(finalVars);
 
-    // ---------------- Puppeteer Launch ----------------
-    const isVercel = !!process.env.VERCEL;
-
-    const browser = await puppeteer.launch(
-      isVercel
-        ? {
-            args: chromium.args,
-            executablePath: await chromium.executablePath(),
-            headless: true,
-            defaultViewport: { width, height },
-          }
-        : {
-            headless: true,
-            // fallback for local Chrome
-            executablePath: process.env.CHROME_PATH || undefined,
-            defaultViewport: { width, height },
-          }
-    );
-
-    const page = await browser.newPage();
-    await page.setContent(renderedHTML, { waitUntil: "domcontentloaded" });
-
-    const buffer = await page.screenshot({ type: "png" });
-    await browser.close();
+    // ---------------- HTML-to-Image Logic ----------------
+    const buffer = await nodeHtmlToImage({
+      html: renderedHTML,
+      type: 'png',
+      quality: 100,
+      puppeteerArgs: ['--no-sandbox', '--disable-setuid-sandbox'],
+      // custom viewport
+      content: renderedHTML,
+      encoding: 'buffer',
+      transparent: false,
+      waitUntil: 'domcontentloaded',
+      puppeteerOptions: {
+        defaultViewport: { width, height },
+      },
+    });
 
     const upload = await uploadToBbImage(buffer as any);
 

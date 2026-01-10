@@ -119,7 +119,7 @@ export async function POST(req: Request) {
     });
     await browser.close();
 
-    const uploadResult: any = await uploadToCloudinary(screenshotBuffer);
+    const uploadResult: any = await uploadToCloudinary(screenshotBuffer as any);
     const thumbnailUrl = uploadResult.secure_url;
 
     /**

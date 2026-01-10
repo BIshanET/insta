@@ -5,13 +5,14 @@ const prisma = new PrismaClient();
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const id = await params;
     const { imageUrl, caption, order, templateId } = await request.json();
 
     const updatedItem = await prisma.postItem.update({
-      where: { id: params.id },
+      where: { id: id as any },
       data: { imageUrl, caption, order },
     });
 

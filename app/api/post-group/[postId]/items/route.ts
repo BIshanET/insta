@@ -5,17 +5,19 @@ const prisma = new PrismaClient();
 
 export async function POST(
   request: Request,
-  { params }: { params: { postId: string } }
+  { params }: { params: Promise<{ postId: string }> }
 ) {
   try {
     const { imageUrl, caption, order } = await request.json();
+    const userId = request.headers.get("x-user-id");
+    const postId = await params;
 
-    if (!params.postId) {
+    if (!postId) {
       return NextResponse.json({ error: "Post ID is required" }, { status: 400 });
     }
 
-    const parentPost = await prisma.post.findUnique({
-      where: { id: params.postId },
+    const parentPost = await prisma.postItem.findUnique({
+      where: { id: postId as any },
     });
 
     if (!parentPost) {
@@ -31,10 +33,12 @@ export async function POST(
 
     const newItem = await prisma.postItem.create({
       data: {
-        parentPostId: params.postId,
+        parentPostId: postId as any,
         imageUrl,
         caption,
         order,
+        type : postId ? "GROUPED" : "INDEPENDENT",
+        userId : userId as string
       },
     });
 
@@ -46,11 +50,12 @@ export async function POST(
 
 export async function GET(
   request: Request,
-  { params }: { params: { postId: string } }
+  { params }: { params: Promise<{ postId: string }> }
 ) {
   try {
+    const postId =await params;
     const postItems = await prisma.postItem.findMany({
-      where: { parentPostId: params.postId },
+      where: { parentPostId: postId as any },
       orderBy: { order: "asc" },
     });
 

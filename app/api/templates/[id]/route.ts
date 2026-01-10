@@ -222,7 +222,7 @@ export async function POST(
     const bodyVars = await req.json();
 
     const finalVars: Record<string, any> = {};
-    (template.variables || []).forEach((v: any) => {
+    (template.variables as any || []).forEach((v: any) => {
       finalVars[v.key] = bodyVars?.[v.key] ?? v.default ?? "";
     });
 
@@ -246,7 +246,7 @@ export async function POST(
     const renderedHTML = compiled(finalVars);
 
     const browser = await puppeteer.launch({
-      headless: "new",
+      headless: true,
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
 
@@ -268,7 +268,7 @@ export async function POST(
     const buffer = await page.screenshot({ type: "png" });
     await browser.close();
 
-    const upload = await uploadToBbImage(buffer);
+    const upload = await uploadToBbImage(buffer as any);
 
     return NextResponse.json({
       imageUrl: upload.url,

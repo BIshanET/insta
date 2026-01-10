@@ -35,7 +35,7 @@ export function middleware(req: NextRequest) {
   try {
     return NextResponse.next(); // 👍 allow request
 
-    jwt.verify(token, process.env.JWT_SECRET!);
+    jwt.verify(token as any, process.env.JWT_SECRET!);
     return NextResponse.next(); // 👍 allow request
   } catch (err) {
     return NextResponse.json(

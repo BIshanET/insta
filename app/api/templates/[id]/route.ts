@@ -1,10 +1,7 @@
-export const runtime = "nodejs";
-
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import Handlebars from "handlebars";
-import puppeteer from "puppeteer-core";
-import chromium from "@sparticuz/chromium";
+import puppeteer from "puppeteer";
 import fs from "fs/promises";
 import path from "path";
 import { uploadToBbImage } from "@/app/lib/uploadToBbImage";
@@ -201,8 +198,6 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const isVercel = !!process.env.VERCEL;
-
     const { id } = await params;
     const { searchParams } = new URL(req.url);
     const dataType = searchParams.get("dataType");
@@ -250,31 +245,16 @@ export async function POST(
     const compiled = Handlebars.compile(hbsSource);
     const renderedHTML = compiled(finalVars);
 
-    // const browser = await puppeteer.launch({
-    //   headless: true,
-    //   args: ["--no-sandbox", "--disable-setuid-sandbox"],
-    // });
-
-    const browser = await puppeteer.launch(
-      isVercel
-        ? {
-            args: chromium.args,
-            defaultViewport: {
-              width: width || 1080,
-              height: height || 1080,
-            },
-            executablePath: await chromium.executablePath(),
-            headless: true,
-          }
-        : {
-            headless: true,
-                        executablePath: process.env.CHROME_PATH,
-
-          }
-    );
+    const browser = await puppeteer.launch({
+      headless: true,
+      args: process.env.VERCEL
+        ? ["--no-sandbox", "--disable-setuid-sandbox"]
+        : [], // no special args needed locally
+      defaultViewport: { width: width || 1080, height: height || 1080 },
+    });
 
     const page = await browser.newPage();
-    // await page.setViewport({ width: width || 1080, height: height || 1080 });
+    await page.setViewport({ width: width || 1080, height: height || 1080 });
 
     await page.setContent(renderedHTML, { waitUntil: "domcontentloaded" });
 

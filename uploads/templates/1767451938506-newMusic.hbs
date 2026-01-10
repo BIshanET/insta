@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{pageTitle}}</title>
+    <style>
+        /* Root variables for exact colors */
+        :root {
+            --primary-purple: #ba3ca0;
+            --dark-purple: #52054c;
+            --glass-bg: rgba(255, 255, 255, 0.82);
+            --text-main: #52054c;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, sans-serif;
+        }
+
+        /* Parent Div - Handles background and centering */
+        .page-container {
+            background-color: #121212;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        /* --- DESKTOP PREVIEW SCALING --- */
+        .preview-scale-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Adjust preview scale based on screen height */
+
+        /* --- THE 1080x1080 INSTAGRAM POST --- */
+        .insta-post {
+            width: 1080px;
+            height: 1080px;
+            position: relative;
+            background-image: url('{{mainImage}}');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 50px 100px rgba(0,0,0,0.5);
+        }
+
+        /* The Exact Purple Tint Overlay */
+        .insta-post::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(186, 60, 160, 0.85); /* Same as your original image tint */
+            z-index: 1;
+        }
+
+        /* The Glassmorphism Player Card */
+        .player-card {
+            position: relative;
+            z-index: 10;
+            width: 720px; 
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border-radius: 65px;
+            padding: 50px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.15);
+        }
+
+        /* Inner Album Art - Matches main background */
+        .album-art {
+            width: 100%;
+            height: 460px;
+            border-radius: 45px;
+            background-image: url('{{mainImage}}');
+            background-size: cover;
+            background-position: center;
+            margin-bottom: 50px;
+        }
+
+        /* Text Layout */
+        .song-info {
+            margin-bottom: 50px;
+        }
+
+        .playlist-label {
+            font-size: 48px;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-bottom: 5px;
+            letter-spacing: -1px;
+        }
+
+        .song-title {
+            font-size: 28px;
+            font-weight: 500;
+            color: var(--text-main);
+            opacity: 0.8;
+        }
+
+        /* Progress Bar Logic */
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background: rgba(82, 5, 76, 0.1);
+            border-radius: 5px;
+            position: relative;
+            margin-bottom: 70px;
+        }
+
+        .progress-bar {
+            width: {{progressPercent}}%;
+            height: 100%;
+            background: var(--dark-purple);
+            border-radius: 5px;
+        }
+
+        .progress-knob {
+            position: absolute;
+            top: 50%;
+            left: {{progressPercent}}%;
+            transform: translate(-50%, -50%);
+            width: 32px;
+            height: 32px;
+            background: var(--dark-purple);
+            border-radius: 50%;
+        }
+
+        /* Music Controls Icons */
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 10px;
+        }
+
+        .icon {
+            fill: var(--dark-purple);
+            width: 52px;
+            height: 52px;
+            cursor: pointer;
+        }
+
+        .play-button {
+            width: 130px;
+            height: 130px;
+            background: var(--dark-purple);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .play-button .icon {
+            fill: white;
+            width: 60px;
+            height: 60px;
+            margin-left: 8px; /* Optical center fix */
+        }
+
+        /* Footer Handle Text */
+        .handle {
+            position: absolute;
+            bottom: 80px;
+            z-index: 10;
+            color: white;
+            font-size: 46px;
+            font-weight: 400;
+            letter-spacing: 1px;
+            opacity: 0.95;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="page-container">
+        
+        <div class="preview-scale-wrapper">
+            
+            <div class="insta-post">
+                
+                <div class="player-card">
+                    <div class="album-art"></div>
+                    
+                    <div class="song-info">
+                        <div class="playlist-label">{{playlistLabel}}</div>
+                        <div class="song-title">{{songTitle}}</div>
+                    </div>
+
+                    <div class="progress-container">
+                        <div class="progress-bar"></div>
+                        <div class="progress-knob"></div>
+                    </div>
+
+                    <div class="controls">
+                        <!-- Shuffle -->
+                        <svg class="icon" viewBox="0 0 24 24"><path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.45 20 9.5V4h-5.5zm.59 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.37-3.37z"/></svg>
+                        
+                        <!-- Prev -->
+                        <svg class="icon" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
+                        
+                        <!-- Play -->
+                        <div class="play-button">
+                            <svg class="icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                        </div>
+                        
+                        <!-- Next -->
+                        <svg class="icon" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+                        
+                        <!-- Repeat -->
+                        <svg class="icon" viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/></svg>
+                    </div>
+                </div>
+
+                
+            </div>
+            
+        </div>
+        
+    </div>
+
+</body>
+</html>

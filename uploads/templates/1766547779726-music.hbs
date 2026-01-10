@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{title}}</title>
+
+<style>
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+height: 100vh;
+display: flex;
+justify-content: center;
+align-items: center;
+background:
+linear-gradient(
+rgba(80, 55, 30, 0.85),
+rgba(40, 25, 10, 0.9)
+),
+url('{{backgroundImage}}');
+background-size: cover;
+background-position: center;
+overflow: hidden;
+}
+
+.player-card {
+width: 380px;
+background: rgba(40, 28, 18, 0.92);
+border-radius: 40px;
+padding: 25px;
+box-shadow:
+0 25px 60px rgba(0, 0, 0, 0.65);
+position: relative;
+transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.player-card:hover {
+transform: translateY(-5px);
+box-shadow:
+0 35px 85px rgba(0, 0, 0, 0.8);
+}
+
+.album-art {
+width: 100%;
+height: 240px;
+border-radius: 25px;
+overflow: hidden;
+margin-bottom: 20px;
+position: relative;
+cursor: grab;
+}
+
+.album-art:active {
+cursor: grabbing;
+}
+
+.album-art img {
+position: absolute;
+top: 50%;
+left: 50%;
+min-width: 100%;
+min-height: 100%;
+width: auto;
+height: auto;
+transform: translate(-50%, -50%);
+user-select: none;
+-webkit-user-drag: none;
+transition: transform 0.08s linear;
+}
+
+.song-info h2 {
+color: #e6c98b;
+font-size: 26px;
+font-weight: 600;
+margin-bottom: 4px;
+}
+
+.song-info p {
+color: #d2b48c;
+opacity: 0.75;
+font-size: 16px;
+margin-bottom: 25px;
+}
+
+.progress-container {
+width: 100%;
+height: 4px;
+background: rgba(230, 201, 139, 0.25);
+border-radius: 2px;
+margin-bottom: 35px;
+position: relative;
+}
+
+.progress-handle {
+width: 16px;
+height: 16px;
+background:
+radial-gradient(circle, #f1c453, #d4a73a);
+border-radius: 50%;
+position: absolute;
+top: 50%;
+left: {{progressPercent}}%;
+transform: translate(-50%, -50%);
+box-shadow:
+0 0 14px rgba(241, 196, 83, 0.8);
+cursor: pointer;
+transition: left 0.3s ease;
+}
+
+.controls {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 0 10px;
+}
+
+.control-icon {
+fill: #caa56a;
+cursor: pointer;
+transition:
+transform 0.25s ease,
+fill 0.25s ease;
+}
+
+.control-icon:hover {
+fill: #f1c453;
+transform: scale(1.15);
+}
+
+.play-button {
+width: 65px;
+height: 65px;
+background:
+linear-gradient(135deg, #f1c453, #d4a73a);
+border-radius: 50%;
+display: flex;
+justify-content: center;
+align-items: center;
+box-shadow:
+0 10px 30px rgba(241, 196, 83, 0.45);
+transition:
+transform 0.25s ease,
+box-shadow 0.25s ease;
+}
+
+.play-button:hover {
+transform: scale(1.08);
+box-shadow:
+0 16px 45px rgba(241, 196, 83, 0.65);
+}
+
+.play-button svg {
+fill: #3a260f;
+width: 28px;
+height: 28px;
+margin-left: 4px;
+}
+
+.footer-text {
+position: absolute;
+bottom: 40px;
+color: #f1c453;
+font-weight: bold;
+font-size: 32px;
+letter-spacing: -1px;
+text-shadow:
+0 6px 25px rgba(0, 0, 0, 0.8);
+}
+</style>
+</head>
+
+<body>
+
+<div class="player-card">
+
+  <!-- Album Art -->
+  <div class="album-art">
+    <img class="main-img" src="{{albumImage}}" alt="Album Art">
+  </div>
+
+  <!-- Song Details -->
+  <div class="song-info">
+    <h2>{{playlistTitle}}</h2>
+    <p>{{songSubtitle}}</p>
+  </div>
+
+  <!-- Progress Bar -->
+  <div class="progress-container">
+    <div class="progress-handle"></div>
+  </div>
+
+  <!-- Player Controls -->
+  <div class="controls">
+
+    <!-- Shuffle -->
+    <svg class="control-icon" width="20" height="20" viewBox="0 0 24 24">
+      <path d="M14.83,13.41L13.42,14.82L16.59,18H15C13.34,18 12,16.66 12,15V9C12,7.34 10.66,6 9,6H4V8H9C9.55,8 10,8.45 10,9V15C10,16.66 11.34,18 13,18H16.59L13.42,21.19L14.83,22.61L20.44,17L14.83,11.39V13.41M4,16H9C9.93,16 10.77,15.64 11.41,15.06L12.83,16.48C11.82,17.43 10.47,18 9,18H4V16M11.41,8.94L12.83,7.52C11.82,6.57 10.47,6 9,6H4V8H9C9.93,8 10.77,8.36 11.41,8.94Z"/>
+    </svg>
+
+    <!-- Previous -->
+    <svg class="control-icon" width="28" height="28" viewBox="0 0 24 24">
+      <path d="M6,18V6H8V18H6M9.5,12L18,6V18L9.5,12Z"/>
+    </svg>
+
+    <!-- Play -->
+    <div class="play-button">
+      <svg viewBox="0 0 24 24">
+        <path d="M8,5.14V19.14L19,12.14L8,5.14Z"/>
+      </svg>
+    </div>
+
+    <!-- Next -->
+    <svg class="control-icon" width="28" height="28" viewBox="0 0 24 24">
+      <path d="M16,18H18V6H16M6,18L14.5,12L6,6V18Z"/>
+    </svg>
+
+    <!-- Repeat -->
+    <svg class="control-icon" width="22" height="22" viewBox="0 0 24 24">
+      <path d="M7,7H17V10L21,6L17,2V5H5V11H7V7M17,17H7V14L3,18L7,22V19H19V13H17V17Z"/>
+    </svg>
+
+  </div>
+</div>
+
+<!-- Background Footer Text -->
+<div class="footer-text">{{footerText}}</div>
+
+<script>
+const img = document.querySelector(".main-img");
+const container = document.querySelector(".album-art");
+
+let isDragging = false;
+let startX = 0;
+let startY = 0;
+let currentX = 0;
+let currentY = 0;
+
+container.addEventListener("mousedown", e => {
+isDragging = true;
+startX = e.clientX - currentX;
+startY = e.clientY - currentY;
+});
+
+window.addEventListener("mousemove", e => {
+if (!isDragging) return;
+currentX = e.clientX - startX;
+currentY = e.clientY - startY;
+img.style.transform = `translate(${currentX}px, ${currentY}px)`;
+});
+
+window.addEventListener("mouseup", () => {
+isDragging = false;
+});
+
+container.addEventListener("touchstart", e => {
+isDragging = true;
+const touch = e.touches[0];
+startX = touch.clientX - currentX;
+startY = touch.clientY - currentY;
+});
+
+window.addEventListener("touchmove", e => {
+if (!isDragging) return;
+const touch = e.touches[0];
+currentX = touch.clientX - startX;
+currentY = touch.clientY - startY;
+img.style.transform = `translate(${currentX}px, ${currentY}px)`;
+});
+
+window.addEventListener("touchend", () => {
+isDragging = false;
+});
+</script>
+
+</body>
+</html>

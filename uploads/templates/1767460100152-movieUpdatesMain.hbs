@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{handleName}} Update</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cinema-brown: #2C1810;
+            --cinema-yellow: #FFB300;
+            --text-light: #F5F5F5;
+            --font-main: 'Inter', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #121212;
+            font-family: var(--font-main);
+        }
+
+        .instagram-post {
+            width: 1080px;
+            height: 1080px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            background-color: var(--cinema-brown);
+            box-shadow: 0 50px 100px rgba(0,0,0,0.8);
+        }
+
+        .bg-layer {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1;
+            background-image: url('{{backgroundImage}}');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .bg-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(115deg, 
+                rgba(44, 24, 16, 0.98) 0%, 
+                rgba(44, 24, 16, 0.9) 40%, 
+                rgba(0, 0, 0, 0.5) 100%);
+        }
+
+        .content-wrapper {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            width: 100%; height: 100%;
+        }
+
+        .left-text {
+            flex: 1.2;
+            padding: 100px 0 0 80px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .handle-name {
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--cinema-yellow);
+            text-transform: uppercase;
+            letter-spacing: 6px;
+            margin-bottom: 25px;
+        }
+
+        .main-title {
+            font-size: 115px;
+            font-weight: 900;
+            line-height: 0.9;
+            text-transform: uppercase;
+            letter-spacing: -4px;
+            color: var(--text-light);
+        }
+
+        .main-title span.highlight {
+            color: var(--cinema-yellow);
+        }
+
+        .date-section {
+            margin-top: auto;
+            margin-bottom: 110px;
+            border-left: 5px solid var(--cinema-yellow);
+            padding-left: 30px;
+        }
+
+        .date-text {
+            font-size: 45px;
+            font-weight: 700;
+            color: var(--text-light);
+        }
+
+        .date-sub {
+            font-size: 20px;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: var(--cinema-yellow);
+            margin-top: 5px;
+        }
+
+        .right-images {
+            position: absolute;
+            right: -100px;
+            top: 0;
+            width: 700px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .movie-frame {
+            width: 600px;
+            height: 380px;
+            border: 14px solid var(--cinema-yellow);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 20px 20px 60px rgba(0,0,0,0.7);
+            background-color: var(--cinema-brown);
+        }
+
+        .movie-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: sepia(20%) contrast(1.1);
+        }
+
+        .frame-top { transform: rotate(14deg) translateX(60px); z-index: 3; }
+        .frame-mid { transform: rotate(-10deg) translateX(-110px); z-index: 2; }
+        .frame-bot { transform: rotate(14deg) translateX(40px) translateY(-40px); z-index: 1; }
+
+    </style>
+</head>
+<body>
+    <div class="instagram-post">
+        <div class="bg-layer">
+            <div class="bg-overlay"></div>
+        </div>
+
+        <div class="content-wrapper">
+            <div class="left-text">
+                <p class="handle-name">{{handleName}}</p>
+                
+                <h1 class="main-title">
+                    {{titleTop}}<br>
+                    <span class="highlight">{{titleHighlight}}</span><br>
+                    {{titleBottom}}
+                </h1>
+                
+                <div class="date-section">
+                    <p class="date-text">{{dateText}}</p>
+                    <p class="date-sub">{{dateSub}}</p>
+                </div>
+            </div>
+
+            <div class="right-images">
+                <div class="movie-frame frame-top">
+                    <img src="{{frameImage1}}" alt="Scene 1">
+                </div>
+                <div class="movie-frame frame-mid">
+                    <img src="{{frameImage2}}" alt="Scene 2">
+                </div>
+                <div class="movie-frame frame-bot">
+                    <img src="{{frameImage3}}" alt="Scene 3">
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

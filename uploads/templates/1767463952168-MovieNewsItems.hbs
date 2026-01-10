@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Oswald:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cinema-brown: #2C1810;
+            --cinema-yellow: #FFB300;
+            --text-light: #F5F5F5;
+            --font-main: 'Inter', sans-serif;
+            --font-display: 'Oswald', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        .instagram-post {
+            width: 1080px; height: 1080px;
+            position: relative; overflow: hidden;
+            background-color: var(--cinema-brown);
+            display: flex; flex-direction: column;
+            font-family: var(--font-main);
+        }
+
+        /* Background Texture */
+        .post-bg {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(44,24,16,0.95), rgba(44,24,16,1)),
+                        url('https://www.transparenttextures.com/patterns/stardust.png');
+            z-index: 1;
+        }
+
+        /* Editorial Content Layout */
+        .content { 
+            position: relative; 
+            z-index: 10; 
+            height: 100%; 
+            display: flex; 
+            flex-direction: column; 
+            padding: 60px 70px 120px 70px; 
+        }
+
+        /* Header */
+        .header { display: flex; align-items: center; gap: 20px; margin-bottom: 40px; }
+        .handle { font-size: 24px; font-weight: 900; color: var(--cinema-yellow); letter-spacing: 5px; text-transform: uppercase; }
+        .separator { flex: 1; height: 1px; background: rgba(255,179,0,0.3); }
+        .tag { font-family: var(--font-display); background: var(--cinema-yellow); color: var(--cinema-brown); padding: 5px 18px; border-radius: 2px; font-size: 18px; }
+
+        /* Title with Highlight Logic */
+        .news-title {
+            font-family: var(--font-display);
+            font-size: 78px; line-height: 0.95; color: var(--text-light);
+            text-transform: uppercase; margin-bottom: 35px;
+            letter-spacing: -1px;
+        }
+        /* Any span inside title gets the yellow highlight */
+        .news-title span {
+            color: var(--cinema-yellow);
+        }
+
+        /* Image Gallery (Small Scale) */
+        .visual-container {
+            width: 100%; 
+            height: 380px; 
+            display: flex; 
+            gap: 20px; 
+            margin-bottom: 45px;
+        }
+
+        .img-wrapper {
+            flex: 1; height: 100%; position: relative;
+            border: 6px solid var(--cinema-yellow);
+            border-radius: 4px; overflow: hidden;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.6);
+        }
+
+        .img-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* Support for single image expanding */
+        .img-full-width { flex: 0 0 100%; }
+
+        /* Description with Highlight Logic */
+        .info-card {
+            background: rgba(255,255,255,0.03);
+            padding: 45px;
+            border-radius: 4px;
+            border-left: 8px solid var(--cinema-yellow);
+            margin-top: auto;
+        }
+
+        .description {
+            font-size: 30px; line-height: 1.5; color: var(--text-light);
+            font-weight: 400; opacity: 0.9;
+        }
+        /* Any span inside description gets the yellow highlight */
+        .description span {
+            color: var(--cinema-yellow);
+            font-weight: 700;
+        }
+
+        /* Footer */
+        .page-indicator {
+            position: absolute; bottom: 45px; right: 70px;
+            font-size: 70px; font-weight: 900; color: rgba(255,179,0,0.15);
+            font-family: var(--font-display);
+        }
+    </style>
+</head>
+<body>
+    <div class="instagram-post">
+        <div class="post-bg"></div>
+
+        <div class="content">
+            <div class="header">
+                <span class="handle">{{handleName}}</span>
+                <div class="separator"></div>
+                <span class="tag">{{newsTag}}</span>
+            </div>
+
+            <!-- Triple braces allow HTML <span> highlighting -->
+            <h1 class="news-title">{{{newsTitle}}}</h1>
+
+            <div class="visual-container">
+                <div class="img-wrapper {{#unless newsImage2}}img-full-width{{/unless}}">
+                    <img src="{{newsImage1}}" alt="News Image 1">
+                </div>
+                
+                {{#if newsImage2}}
+                <div class="img-wrapper">
+                    <img src="{{newsImage2}}" alt="News Image 2">
+                </div>
+                {{/if}}
+            </div>
+
+            <div class="info-card">
+                <!-- Triple braces allow HTML <span> highlighting -->
+                <p class="description">{{{newsDescription}}}</p>
+            </div>
+
+            <span class="page-indicator">{{pageNumber}}</span>
+        </div>
+    </div>
+</body>
+</html>

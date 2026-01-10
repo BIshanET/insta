@@ -1,4 +1,3 @@
-// src/app/api/posts/[postId]/items/route.ts
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 
@@ -9,7 +8,7 @@ export async function POST(
   { params }: { params: { postId: string } }
 ) {
   try {
-    const { imageUrl, caption, order, templateId } = await request.json();
+    const { imageUrl, caption, order } = await request.json();
 
     if (!params.postId) {
       return NextResponse.json({ error: "Post ID is required" }, { status: 400 });
@@ -36,7 +35,6 @@ export async function POST(
         imageUrl,
         caption,
         order,
-        templateId,
       },
     });
 

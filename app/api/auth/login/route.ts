@@ -18,13 +18,13 @@ export async function POST(req: Request) {
     });
 
     if (!user) {
-      return new Response("Invalid email or password", { status: 401 });
+      return Response.json({ message: "Invalid Credentials" });
     }
 
     const isValid = await bcrypt.compare(password, user.password);
 
     if (!isValid) {
-      return new Response("Invalid email or password", { status: 401 });
+      return Response.json({ message: "Invalid Credentials" });
     }
 
     // Create token
@@ -42,7 +42,7 @@ export async function POST(req: Request) {
       path: "/",
     });
 
-    return Response.json({ message: "Login successful", user });
+    return Response.json({ message: "Login successful", user ,token, success : true });
   } catch (err) {
     console.error(err);
     return new Response("Server error", { status: 500 });

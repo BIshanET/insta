@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title || "Music Player Card" %></title>
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      }
+
+      /* Instagram canvas */
+      .body {
+        width: 1080px;
+        height: 1080px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+
+        background:
+          linear-gradient(
+            rgba(80, 55, 30, 0.85),
+            rgba(40, 25, 10, 0.9)
+          ),
+          url("<%= backgroundImage %>");
+        background-size: cover;
+        background-position: center;
+      }
+
+      .player-card {
+        width: 60%;
+        height: 80%;
+        background: rgba(40, 28, 18, 0.92);
+        border-radius: 40px;
+        padding: 25px;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.65);
+        position: relative;
+      }
+
+      .album-art {
+        width: 100%;
+        height: 400px;
+        border-radius: 25px;
+        overflow: hidden;
+        margin-bottom: 20px;
+        position: relative;
+      }
+
+      .album-art img {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        min-width: 100%;
+        min-height: 100%;
+        transform: translate(-50%, -50%);
+        user-select: none;
+      }
+
+      .song-info h2 {
+        color: #e6c98b;
+        font-size: 50px;
+        font-weight: 600;
+      }
+
+      .song-info p {
+        color: #d2b48c;
+        opacity: 0.75;
+        font-size: 35px;
+        margin-bottom: 50px;
+      }
+
+      .progress-container {
+        width: 100%;
+        height: 10px;
+        background: rgba(230, 201, 139, 0.25);
+        border-radius: 2px;
+        margin-bottom: 35px;
+        position: relative;
+      }
+
+      .progress-handle {
+        width: 26px;
+        height: 26px;
+        background: radial-gradient(circle, #f1c453, #d4a73a);
+        border-radius: 50%;
+        position: absolute;
+        top: 50%;
+        left: <%= progressPercent || 25 %>%;
+        transform: translate(-50%, -50%);
+        box-shadow: 0 0 14px rgba(241, 196, 83, 0.8);
+      }
+
+      .controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 10px;
+      }
+
+      .control-icon {
+        fill: #caa56a;
+      }
+
+      .play-button {
+        width: 105px;
+        height: 105px;
+        background: linear-gradient(135deg, #f1c453, #d4a73a);
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        box-shadow: 0 10px 30px rgba(241, 196, 83, 0.45);
+      }
+
+      .play-button svg {
+        fill: #3a260f;
+        width: 60px;
+        height: 60px;
+        margin-left: 4px;
+      }
+
+      .footer-text {
+        position: absolute;
+        bottom: 40px;
+        color: #f1c453;
+        font-weight: bold;
+        font-size: 32px;
+        text-shadow: 0 6px 25px rgba(0, 0, 0, 0.8);
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="body">
+      <div class="player-card">
+
+        <div class="album-art">
+          <img
+            src="<%= albumImage %>"
+            alt="Album Art"
+          />
+        </div>
+
+        <div class="song-info">
+          <h2><%= playlistTitle %></h2>
+          <p><%= songSubtitle %></p>
+        </div>
+
+        <div class="progress-container">
+          <div class="progress-handle"></div>
+        </div>
+
+        <div class="controls">
+          <!-- Shuffle -->
+          <svg class="control-icon" width="60" height="60" viewBox="0 0 24 24">
+            <path d="M14.83,13.41L13.42,14.82L16.59,18H15C13.34,18 12,16.66 12,15V9C12,7.34 10.66,6 9,6H4V8H9C9.55,8 10,8.45 10,9V15C10,16.66 11.34,18 13,18H16.59L13.42,21.19L14.83,22.61L20.44,17L14.83,11.39Z"/>
+          </svg>
+
+          <!-- Previous -->
+          <svg class="control-icon" width="60" height="60" viewBox="0 0 24 24">
+            <path d="M6,18V6H8V18H6M9.5,12L18,6V18L9.5,12Z"/>
+          </svg>
+
+          <!-- Play -->
+          <div class="play-button">
+            <svg viewBox="0 0 24 24">
+              <path d="M8,5.14V19.14L19,12.14L8,5.14Z"/>
+            </svg>
+          </div>
+
+          <!-- Next -->
+          <svg class="control-icon" width="60" height="60" viewBox="0 0 24 24">
+            <path d="M16,18H18V6H16M6,18L14.5,12L6,6V18Z"/>
+          </svg>
+
+          <!-- Repeat -->
+          <svg class="control-icon" width="60" height="60" viewBox="0 0 24 24">
+            <path d="M7,7H17V10L21,6L17,2V5H5V11H7V7M17,17H7V14L3,18L7,22V19H19V13H17V17Z"/>
+          </svg>
+        </div>
+
+      </div>
+    </div>
+
+    <% if (footerText) { %>
+      <div class="footer-text"><%= footerText %></div>
+    <% } %>
+  </body>
+</html>

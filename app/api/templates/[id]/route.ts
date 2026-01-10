@@ -69,11 +69,11 @@ export async function POST(
       html: renderedHTML,
       type: 'png',
       quality: 100,
-      puppeteerArgs: ['--no-sandbox', '--disable-setuid-sandbox'] as any,
-      // custom viewport
-      content: renderedHTML as any,
-      encoding: 'buffer' as any,
-      transparent: false,
+      // puppeteerArgs: ['--no-sandbox', '--disable-setuid-sandbox'] as any,
+      // // custom viewport
+      // content: renderedHTML as any,
+      // encoding: 'buffer' as any,
+      // transparent: false,
       waitUntil: 'domcontentloaded',
     });
 

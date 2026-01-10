@@ -1,9 +1,9 @@
 export const runtime = "nodejs"; // <-- important
+
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import Handlebars from "handlebars";
-import { chromium as playwrightChromium } from "playwright-core";
-import chromium from "@sparticuz/chromium";
+import { chromium } from "playwright"; // ✅ FULL playwright (Vercel supported)
 import fs from "fs/promises";
 import path from "path";
 import { uploadToBbImage } from "@/app/lib/uploadToBbImage";
@@ -62,18 +62,18 @@ export async function POST(
     const compiled = Handlebars.compile(hbsSource);
     const renderedHTML = compiled(finalVars);
 
-    // ---------------- PUPPETEER-CORE WITH CHROME-AWS-LAMBDA ----------------
-  const browser = await playwrightChromium.launch({
-  args: chromium.args,
-  executablePath:false ? process.env.CHROME_PATH : await chromium.executablePath(),
-  headless: true,
-  
-});
+    // ---------------- PLAYWRIGHT (VERCEL SAFE) ----------------
+    const browser = await chromium.launch({
+      headless: true,
+    });
 
+    const page = await browser.newPage({
+      viewport: {
+        width: width || 1080,
+        height: height || 1080,
+      },
+    });
 
-    const page = await browser.newPage();
-
-    // await page.setViewport({ width: width || 1080, height: height || 1080 });
     await page.setContent(renderedHTML, { waitUntil: "domcontentloaded" });
 
     const buffer = await page.screenshot({ type: "png" });

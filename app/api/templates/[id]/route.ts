@@ -1,12 +1,12 @@
-export const runtime = "nodejs";
-
+export const runtime = "nodejs"; // <-- important
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import Handlebars from "handlebars";
+import { chromium as playwrightChromium } from "playwright-core";
+import chromium from "@sparticuz/chromium";
 import fs from "fs/promises";
 import path from "path";
 import { uploadToBbImage } from "@/app/lib/uploadToBbImage";
-import nodeHtmlToImage from "node-html-to-image";
 
 const prisma = new PrismaClient();
 
@@ -16,10 +16,10 @@ export async function POST(
 ) {
   try {
     const { id } = await params;
-    const url = new URL(req.url);
-    const dataType = url.searchParams.get("dataType");
-    const width = parseInt(url.searchParams.get("width") || "1080");
-    const height = parseInt(url.searchParams.get("height") || "1080");
+    const { searchParams } = new URL(req.url);
+    const dataType = searchParams.get("dataType");
+    const height: number = parseInt(searchParams.get("height") as string);
+    const width: number = parseInt(searchParams.get("width") as string);
 
     if (!id || !dataType) {
       return NextResponse.json(
@@ -39,7 +39,7 @@ export async function POST(
     const bodyVars = await req.json();
 
     const finalVars: Record<string, any> = {};
-    ((template.variables as any) || []).forEach((v: any) => {
+    (template.variables as any || []).forEach((v: any) => {
       finalVars[v.key] = bodyVars?.[v.key] ?? v.default ?? "";
     });
 
@@ -52,36 +52,40 @@ export async function POST(
     }
 
     if (dataType !== "image") {
-      return NextResponse.json(
-        { error: "Invalid dataType" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Invalid dataType" }, { status: 400 });
     }
 
     const templatesDir = path.join(process.cwd(), "uploads/templates");
     const filePath = path.join(templatesDir, template.html);
+
     const hbsSource = await fs.readFile(filePath, "utf-8");
     const compiled = Handlebars.compile(hbsSource);
     const renderedHTML = compiled(finalVars);
 
-    // ---------------- HTML-to-Image Logic ----------------
-    const buffer = await nodeHtmlToImage({
-      html: renderedHTML,
-      type: 'png',
-      quality: 100,
-      // puppeteerArgs: ['--no-sandbox', '--disable-setuid-sandbox'] as any,
-      // // custom viewport
-      // content: renderedHTML as any,
-      // encoding: 'buffer' as any,
-      // transparent: false,
-      waitUntil: 'domcontentloaded',
-    });
+    // ---------------- PUPPETEER-CORE WITH CHROME-AWS-LAMBDA ----------------
+  const browser = await playwrightChromium.launch({
+  args: chromium.args,
+  executablePath:false ? process.env.CHROME_PATH : await chromium.executablePath(),
+  headless: true,
+  
+});
+
+
+    const page = await browser.newPage();
+
+    // await page.setViewport({ width: width || 1080, height: height || 1080 });
+    await page.setContent(renderedHTML, { waitUntil: "domcontentloaded" });
+
+    const buffer = await page.screenshot({ type: "png" });
+    await browser.close();
 
     const upload = await uploadToBbImage(buffer as any);
 
-    return NextResponse.json({ imageUrl: upload.url });
+    return NextResponse.json({
+      imageUrl: upload.url,
+    });
   } catch (err: any) {
-    console.error("Error generating image:", err);
+    console.error(err);
     return NextResponse.json(
       { error: err.message || "Internal Server Error" },
       { status: 500 }

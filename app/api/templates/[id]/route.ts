@@ -69,15 +69,12 @@ export async function POST(
       html: renderedHTML,
       type: 'png',
       quality: 100,
-      puppeteerArgs: ['--no-sandbox', '--disable-setuid-sandbox'],
+      puppeteerArgs: ['--no-sandbox', '--disable-setuid-sandbox'] as any,
       // custom viewport
-      content: renderedHTML,
-      encoding: 'buffer',
+      content: renderedHTML as any,
+      encoding: 'buffer' as any,
       transparent: false,
       waitUntil: 'domcontentloaded',
-      puppeteerOptions: {
-        defaultViewport: { width, height },
-      },
     });
 
     const upload = await uploadToBbImage(buffer as any);

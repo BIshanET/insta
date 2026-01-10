@@ -1,7 +1,10 @@
+export const runtime = "nodejs";
+
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import Handlebars from "handlebars";
-import puppeteer from "puppeteer";
+import puppeteer from "puppeteer-core";
+import chromium from "@sparticuz/chromium";
 import fs from "fs/promises";
 import path from "path";
 import { uploadToBbImage } from "@/app/lib/uploadToBbImage";
@@ -198,11 +201,13 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const isVercel = !!process.env.VERCEL;
+
     const { id } = await params;
     const { searchParams } = new URL(req.url);
     const dataType = searchParams.get("dataType");
-    const height : number = parseInt(searchParams.get("height") as string);
-    const width : number = parseInt(searchParams.get("width") as string);
+    const height: number = parseInt(searchParams.get("height") as string);
+    const width: number = parseInt(searchParams.get("width") as string);
 
     if (!id || !dataType) {
       return NextResponse.json(
@@ -222,7 +227,7 @@ export async function POST(
     const bodyVars = await req.json();
 
     const finalVars: Record<string, any> = {};
-    (template.variables as any || []).forEach((v: any) => {
+    ((template.variables as any) || []).forEach((v: any) => {
       finalVars[v.key] = bodyVars?.[v.key] ?? v.default ?? "";
     });
 
@@ -245,13 +250,31 @@ export async function POST(
     const compiled = Handlebars.compile(hbsSource);
     const renderedHTML = compiled(finalVars);
 
-    const browser = await puppeteer.launch({
-      headless: true,
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
-    });
+    // const browser = await puppeteer.launch({
+    //   headless: true,
+    //   args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    // });
+
+    const browser = await puppeteer.launch(
+      isVercel
+        ? {
+            args: chromium.args,
+            defaultViewport: {
+              width: width || 1080,
+              height: height || 1080,
+            },
+            executablePath: await chromium.executablePath(),
+            headless: true,
+          }
+        : {
+            headless: true,
+                        executablePath: process.env.CHROME_PATH,
+
+          }
+    );
 
     const page = await browser.newPage();
-    await page.setViewport({ width: width || 1080, height: height || 1080 });
+    // await page.setViewport({ width: width || 1080, height: height || 1080 });
 
     await page.setContent(renderedHTML, { waitUntil: "domcontentloaded" });
 

@@ -199,15 +199,28 @@ export async function POST(
 ) {
   try {
     if (process.env.VERCEL === "1") {
-      const ngrokRes = await fetch(`http://localhost:3000/api/system/ngrok`);
+      const ngrokRes = await fetch(
+        "https://cbd6d3aa733c.ngrok-free.app/api/system/ngrok",
+        {
+          headers: {
+            Authorization: req.headers.get("Authorization") || "",
+          },
+        }
+      );
       const { url } = await ngrokRes.json();
 
       const { pathname, search } = new URL(req.url);
       const forwardUrl = url + pathname + search;
 
+      const headers = Object.fromEntries(req.headers.entries());
+
+      // Optionally override/add headers (e.g., ensure Authorization is forwarded)
+      headers["Authorization"] = req.headers.get("Authorization") || "";
+
+      // Then pass to fetch
       const proxied = await fetch(forwardUrl, {
         method: "POST",
-        headers: req.headers,
+        headers,
         body: await req.text(),
       });
 

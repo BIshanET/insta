@@ -198,29 +198,41 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+
+
     if (process.env.VERCEL === "1") {
-      const ngrokRes = await fetch(
-        "https://cbd6d3aa733c.ngrok-free.app/api/system/ngrok",
-        {
+
+  const config = await prisma.systemConfig.findUnique({
+    where: { key: "NGROK_URL" },
+  });
+
+  const ngRokUrl = config?.value;
+
+      // const ngrokRes = await fetch(
+      //   "https://insta-topaz-phi.vercel.app/api/system/ngrok",
+      //   {
+      //     headers: {
+      //       Authorization: req.headers.get("Authorization") || "",
+      //     },
+      //   }
+      // );
+      // const { url } = await ngrokRes.json();
+      // console.log("urlllll",url)
+
+      const { pathname, search } = new URL(req.url);
+      const forwardUrl = ngRokUrl + pathname + search;
+
+      // const headers = Object.fromEntries(req.headers.entries());
+
+      // headers["Authorization"] = req.headers.get("Authorization") || "";
+      // console.log("headerrrr",headers)
+
+      const proxied = await fetch(forwardUrl, {
+        method: "POST",
           headers: {
             Authorization: req.headers.get("Authorization") || "",
           },
-        }
-      );
-      const { url } = await ngrokRes.json();
-
-      const { pathname, search } = new URL(req.url);
-      const forwardUrl = url + pathname + search;
-
-      const headers = Object.fromEntries(req.headers.entries());
-
-      // Optionally override/add headers (e.g., ensure Authorization is forwarded)
-      headers["Authorization"] = req.headers.get("Authorization") || "";
-
-      // Then pass to fetch
-      const proxied = await fetch(forwardUrl, {
-        method: "POST",
-        headers,
+        
         body: await req.text(),
       });
 

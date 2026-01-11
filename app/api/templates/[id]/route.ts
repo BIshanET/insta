@@ -1,74 +1,287 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import Handlebars from "handlebars";
-import path from "path";
+import puppeteer from "puppeteer";
 import fs from "fs/promises";
+import path from "path";
 import { uploadToBbImage } from "@/app/lib/uploadToBbImage";
-
-// IMPORTANT: Use puppeteer-core and sparticuz/chromium
-import puppeteer from "puppeteer-core";
-import chromium from "@sparticuz/chromium";
 
 const prisma = new PrismaClient();
 
-// Optional: Helper to determine if we are local or on Vercel
-const isLocal = process.env.NODE_ENV === 'development';
+// export async function GET(
+//   req: Request,
+//   { params }: { params: Promise<{ id: string }> }
+// ) {
+//   try {
+//     const { id } = await params;
+
+//     if (!id) {
+//       return NextResponse.json(
+//         { error: "Template ID is required" },
+//         { status: 400 }
+//       );
+//     }
+
+//     const template = await prisma.template.findUnique({ where: { id } });
+
+//     if (!template) {
+//       return NextResponse.json(
+//         { error: "Template not found" },
+//         { status: 404 }
+//       );
+//     }
+
+//     // Parse query params
+//     const url = new URL(req.url);
+//     const queryVars = Object.fromEntries(url.searchParams.entries());
+
+//     // Parse stored template variables
+//     let templateVars: any[] = [];
+//     try {
+//       templateVars = Array.isArray(template.variables)
+//         ? template.variables
+//         : template.variables;
+//     } catch {
+//       templateVars = [];
+//     }
+
+//     // Build final variables object for Handlebars
+//     const finalVars: Record<string, any> = {};
+//     templateVars.forEach((v: any) => {
+//       finalVars[v.key] = queryVars[v.key]
+//         ? JSON.parse(queryVars[v.key])
+//         : v.default ?? "";
+//     });
+
+//     // Compile HTML
+//     const compiled = Handlebars.compile(template.html);
+//     const renderedHTML = compiled(finalVars);
+
+//     // ---------- PUPPETEER SECTION ----------
+//     const browser = await puppeteer.launch({
+//       headless: "new",
+//       args: ["--no-sandbox", "--disable-setuid-sandbox"],
+//     });
+//     const page = await browser.newPage();
+
+//     await page.setViewport({
+//       width: 900,
+//       height: 900,
+//       deviceScaleFactor: 1,
+//     });
+
+//     await page.setContent(renderedHTML, { waitUntil: "networkidle0" });
+
+//     // Capture JPEG Screenshot
+//     const jpegBuffer = await page.screenshot({
+//       type: "jpeg",
+//       quality: 80, // reduce size
+//       omitBackground: false,
+//     });
+
+//     await browser.close();
+
+//     // Convert to base64 (small & safe for JSON)
+//     const imageBase64 = jpegBuffer.toString("base64");
+
+//     // Build clean response object
+//     const responseData = {
+//       id: template.id,
+//       name: template.name,
+//       variables: templateVars,
+//       imageBase64,  // <-- instead of renderedHTML
+//     };
+
+//     return NextResponse.json(responseData);
+//   } catch (err: any) {
+//     console.error("Error generating image:", err);
+//     return NextResponse.json(
+//       { error: err.message || "Internal Server Error" },
+//       { status: 500 }
+//     );
+//   }
+// }
+
+// export async function GET(
+//   req: Request,
+//   { params }: { params: Promise<{ id: string }> }
+// ) {
+//   try {
+//     const { id } = await params;
+
+//     if (!id) {
+//       return NextResponse.json(
+//         { error: "Template ID is required" },
+//         { status: 400 }
+//       );
+//     }
+
+//     const template = await prisma.template.findUnique({ where: { id } });
+
+//     if (!template) {
+//       return NextResponse.json(
+//         { error: "Template not found" },
+//         { status: 404 }
+//       );
+//     }
+
+//     const url = new URL(req.url);
+//     const queryVars = Object.fromEntries(url.searchParams.entries());
+
+//     let templateVars: any[] = [];
+//     try {
+//       templateVars = Array.isArray(template.variables)
+//         ? template.variables
+//         : template.variables;
+//     } catch {
+//       templateVars = [];
+//     }
+
+//     const finalVars: Record<string, any> = {};
+//     templateVars.forEach((v: any) => {
+//       finalVars[v.key] = queryVars[v.key]
+//         ? JSON.parse(queryVars[v.key])
+//         : v.default ?? "";
+//     });
+
+//     const templatesDir = path.join(process.cwd(), "uploads/templates");
+//     const filePath = path.join(templatesDir, template.html);
+
+//     const hbsSource = await fs.readFile(filePath, "utf-8");
+//     const compiled = Handlebars.compile(hbsSource);
+//     const renderedHTML = compiled(finalVars);
+
+//     const browser = await puppeteer.launch({
+//       headless: "new",
+//       args: ["--no-sandbox", "--disable-setuid-sandbox"],
+//     });
+
+//     const page = await browser.newPage();
+
+//     await page.setViewport({
+//       width: 1080,
+//       height: 1080,
+//       deviceScaleFactor: 1,
+//     });
+
+//     await page.setContent(renderedHTML, { waitUntil: "networkidle0" });
+
+//     const jpegBuffer = await page.screenshot({
+//       type: "jpeg",
+//       quality: 80,
+//       omitBackground: false,
+//     });
+
+//     await browser.close();
+
+//     const imageBase64 = jpegBuffer.toString("base64");
+
+//     const responseData = {
+//       id: template.id,
+//       name: template.name,
+//       variables: templateVars,
+//       imageBase64,
+//     };
+
+//     return NextResponse.json(responseData);
+//   } catch (err: any) {
+//     console.error("Error generating image:", err);
+//     return NextResponse.json(
+//       { error: err.message || "Internal Server Error" },
+//       { status: 500 }
+//     );
+//   }
+// }
 
 export async function POST(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    if (process.env.VERCEL === "1") {
+      const ngrokRes = await fetch(`http://localhost:3000/api/system/ngrok`);
+      const { url } = await ngrokRes.json();
+
+      const { pathname, search } = new URL(req.url);
+      const forwardUrl = url + pathname + search;
+
+      const proxied = await fetch(forwardUrl, {
+        method: "POST",
+        headers: req.headers,
+        body: await req.text(),
+      });
+
+      const data = await proxied.text();
+      return new NextResponse(data, { status: proxied.status });
+    }
+    // ===== END PROXY PART =====
+
+    // ===== ORIGINAL LOGIC (UNCHANGED) =====
     const { id } = await params;
     const { searchParams } = new URL(req.url);
     const dataType = searchParams.get("dataType");
-    const height: number = parseInt(searchParams.get("height") || "1080");
-    const width: number = parseInt(searchParams.get("width") || "1080");
+    const height: number = parseInt(searchParams.get("height") as string);
+    const width: number = parseInt(searchParams.get("width") as string);
 
-    // ... (Your existing Prisma and Handlebars logic stays the same) ...
+    if (!id || !dataType) {
+      return NextResponse.json(
+        { error: "Template ID and dataType are required" },
+        { status: 400 }
+      );
+    }
+
     const template = await prisma.template.findUnique({ where: { id } });
-    if (!template) return NextResponse.json({ error: "Not found" }, { status: 404 });
+    if (!template) {
+      return NextResponse.json(
+        { error: "Template not found" },
+        { status: 404 }
+      );
+    }
 
     const bodyVars = await req.json();
+
     const finalVars: Record<string, any> = {};
-    (template.variables as any || []).forEach((v: any) => {
+    ((template.variables as any) || []).forEach((v: any) => {
       finalVars[v.key] = bodyVars?.[v.key] ?? v.default ?? "";
     });
 
+    if (dataType === "variables") {
+      return NextResponse.json({
+        id: template.id,
+        name: template.name,
+        variables: template.variables,
+      });
+    }
+
+    if (dataType !== "image") {
+      return NextResponse.json({ error: "Invalid dataType" }, { status: 400 });
+    }
+
     const templatesDir = path.join(process.cwd(), "uploads/templates");
-    const filePath = path.join(templatesDir, template.html as string);
+    const filePath = path.join(templatesDir, template.html);
+
     const hbsSource = await fs.readFile(filePath, "utf-8");
     const compiled = Handlebars.compile(hbsSource);
     const renderedHTML = compiled(finalVars);
 
-    // ---------- UPDATED PUPPETEER SECTION ----------
-    let browser;
+    const browser = await puppeteer.launch({
+      headless: true,
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    });
 
-    try {
-      browser = await puppeteer.launch({
-        args: chromium.args,
-        defaultViewport: { width, height },
-        executablePath: true ? process.env.CHROME_PATH  : await chromium.executablePath(),
-        headless: true,
-        // ignoreHTTPSErrors: true,
-      });
+    const page = await browser.newPage();
+    await page.setViewport({ width: width || 1080, height: height || 1080 });
 
-      const page = await browser.newPage();
-      await page.setContent(renderedHTML, { waitUntil: "networkidle0" });
+    await page.setContent(renderedHTML, { waitUntil: "domcontentloaded" });
 
-      const buffer = await page.screenshot({ type: "png" });
-      await browser.close();
+    const buffer = await page.screenshot({ type: "png" });
+    await browser.close();
 
-      const upload = await uploadToBbImage(buffer as any);
+    const upload = await uploadToBbImage(buffer as any);
 
-      return NextResponse.json({ imageUrl: upload.url });
-    } catch (browserError) {
-      console.error("Browser Error:", browserError);
-      throw browserError;
-    } finally {
-      if (browser) await browser.close();
-    }
-
+    return NextResponse.json({
+      imageUrl: upload.url,
+    });
   } catch (err: any) {
     console.error(err);
     return NextResponse.json(

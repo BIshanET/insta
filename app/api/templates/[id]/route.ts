@@ -208,24 +208,8 @@ export async function POST(
 
   const ngRokUrl = config?.value;
 
-      // const ngrokRes = await fetch(
-      //   "https://insta-topaz-phi.vercel.app/api/system/ngrok",
-      //   {
-      //     headers: {
-      //       Authorization: req.headers.get("Authorization") || "",
-      //     },
-      //   }
-      // );
-      // const { url } = await ngrokRes.json();
-      // console.log("urlllll",url)
-
       const { pathname, search } = new URL(req.url);
       const forwardUrl = ngRokUrl + pathname + search;
-
-      // const headers = Object.fromEntries(req.headers.entries());
-
-      // headers["Authorization"] = req.headers.get("Authorization") || "";
-      // console.log("headerrrr",headers)
 
       const proxied = await fetch(forwardUrl, {
         method: "POST",
@@ -239,14 +223,12 @@ export async function POST(
       const data = await proxied.text();
       return new NextResponse(data, { status: proxied.status });
     }
-    // ===== END PROXY PART =====
 
-    // ===== ORIGINAL LOGIC (UNCHANGED) =====
     const { id } = await params;
     const { searchParams } = new URL(req.url);
     const dataType = searchParams.get("dataType");
-    const height: number = parseInt(searchParams.get("height") as string);
-    const width: number = parseInt(searchParams.get("width") as string);
+    // const height: number = parseInt(searchParams.get("height") as string);
+    // const width: number = parseInt(searchParams.get("width") as string);
 
     if (!id || !dataType) {
       return NextResponse.json(
@@ -262,6 +244,24 @@ export async function POST(
         { status: 404 }
       );
     }
+
+    const dimentions = {
+      "Post" :{
+        height : 1080,
+        width : 1080
+      },
+      "Reel" : {
+        height : 1920,
+        width : 1080
+      },
+      "Story" : {
+        height : 1920,
+        width : 1080
+      }
+    }
+
+    const height =dimentions[template.contentType].height;
+    const width =dimentions[template.contentType].width;
 
     const bodyVars = await req.json();
 
@@ -295,9 +295,9 @@ export async function POST(
     });
 
     const page = await browser.newPage();
-    await page.setViewport({ width: width || 1080, height: height || 1080 });
+    await page.setViewport({ width: width, height: height });
 
-    await page.setContent(renderedHTML, { waitUntil: "domcontentloaded" });
+    await page.setContent(renderedHTML, { waitUntil: "networkidle0" });
 
     const buffer = await page.screenshot({ type: "png" });
     await browser.close();

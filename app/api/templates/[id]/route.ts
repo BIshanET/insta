@@ -195,28 +195,25 @@ const prisma = new PrismaClient();
 
 export async function POST(
   req: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-
-
     if (process.env.VERCEL === "1") {
+      const config = await prisma.systemConfig.findUnique({
+        where: { key: "NGROK_URL" },
+      });
 
-  const config = await prisma.systemConfig.findUnique({
-    where: { key: "NGROK_URL" },
-  });
-
-  const ngRokUrl = config?.value;
+      const ngRokUrl = config?.value;
 
       const { pathname, search } = new URL(req.url);
       const forwardUrl = ngRokUrl + pathname + search;
 
       const proxied = await fetch(forwardUrl, {
         method: "POST",
-          headers: {
-            Authorization: req.headers.get("Authorization") || "",
-          },
-        
+        headers: {
+          Authorization: req.headers.get("Authorization") || "",
+        },
+
         body: await req.text(),
       });
 
@@ -233,7 +230,7 @@ export async function POST(
     if (!id || !dataType) {
       return NextResponse.json(
         { error: "Template ID and dataType are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -241,27 +238,27 @@ export async function POST(
     if (!template) {
       return NextResponse.json(
         { error: "Template not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
     const dimentions = {
-      "Post" :{
-        height : 1080,
-        width : 1080
+      Post: {
+        height: 1080,
+        width: 1080,
       },
-      "Reel" : {
-        height : 1920,
-        width : 1080
+      Reel: {
+        height: 1920,
+        width: 1080,
       },
-      "Story" : {
-        height : 1920,
-        width : 1080
-      }
-    }
+      Story: {
+        height: 1920,
+        width: 1080,
+      },
+    };
 
-    const height =dimentions[template.contentType].height;
-    const width =dimentions[template.contentType].width;
+    const height = dimentions[template.contentType].height;
+    const width = dimentions[template.contentType].width;
 
     const bodyVars = await req.json();
 
@@ -311,7 +308,7 @@ export async function POST(
     console.error(err);
     return NextResponse.json(
       { error: err.message || "Internal Server Error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

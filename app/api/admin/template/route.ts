@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { contentType, PrismaClient } from "@prisma/client";
 import { uploadToCloudinary } from "@/app/lib/upload";
 import puppeteer from "puppeteer";
 import Handlebars from "handlebars";
@@ -65,20 +65,26 @@ export async function POST(req: Request) {
     const name = formData.get("name") as string;
     const variablesRaw = formData.get("variables") as string;
     const file = formData.get("file") as File;
-    const height : number = parseInt(formData.get("height") as string) ;
-    const width : number = parseInt(formData.get("width") as string) ;
+   
+    const type: "Post" | "PostGroup" = formData.get("type") as
+      | "Post"
+      | "PostGroup";
+    const contentType:contentType = formData.get("contentType") as contentType
+
+    const height: number = contentType == "Reel" ? 1920 : 1080
+    const width: number = 1080;
 
     if (!name || !file) {
       return NextResponse.json(
         { error: "Name and Handlebars file are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (!file.name.endsWith(".hbs")) {
       return NextResponse.json(
         { error: "Invalid template file" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -110,7 +116,11 @@ export async function POST(req: Request) {
     });
 
     const page = await browser.newPage();
-    await page.setViewport({ width: width || 1080, height: height || 1080, deviceScaleFactor: 1 });
+    await page.setViewport({
+      width: width || 1080,
+      height: height || 1080,
+      deviceScaleFactor: 1,
+    });
     await page.setContent(renderedHTML, { waitUntil: "networkidle0" });
 
     const screenshotBuffer = await page.screenshot({
@@ -133,6 +143,8 @@ export async function POST(req: Request) {
         html: fileName, // store .hbs file name
         variables,
         thumbnail: thumbnailUrl,
+        type,
+        contentType
       },
     });
 
@@ -141,7 +153,7 @@ export async function POST(req: Request) {
     console.error("Error creating template:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -156,7 +168,7 @@ export async function GET() {
     console.error("Error fetching templates:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

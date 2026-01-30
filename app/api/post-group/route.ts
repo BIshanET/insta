@@ -71,7 +71,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { title, description, status , imageUrl } =
+    const { title, description, status , imageUrl,userTags,hashtags } =
       await request.json();
 
     const user = await prisma.user.findUnique({
@@ -84,12 +84,66 @@ export async function POST(request: Request) {
         title,
         description,
         status: status || "DRAFT",
-        imageUrl
+        imageUrl,
+        userTags,
+        hashtags
       },
     });
 
     return NextResponse.json(newPost, { status: 201 });
   } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+export async function PUT(request: Request) {
+  try {
+    const userId = request.headers.get("x-user-id");
+
+    if (!userId) {
+      return NextResponse.json(
+        { error: "Unauthorized: Missing user id" },
+        { status: 401 }
+      );
+    }
+
+    const { id, title, description, status, imageUrl,userTags,hashtags } = await request.json();
+
+    if (!id) {
+      return NextResponse.json(
+        { error: "Bad Request: Missing post group id" },
+        { status: 400 }
+      );
+    }
+
+    const existingPostGroup = await prisma.postGroup.findUnique({
+      where: { id },
+    });
+
+    if (!existingPostGroup || existingPostGroup.userId !== userId) {
+      return NextResponse.json(
+        { error: "Forbidden: You are not allowed to edit this post" },
+        { status: 403 }
+      );
+    }
+
+    const updatedPostGroup = await prisma.postGroup.update({
+      where: {
+        id: id,
+      },
+      data: {
+        title,
+        description,
+        status,
+        imageUrl,
+        userTags,
+        hashtags
+      },
+    });
+
+    return NextResponse.json(updatedPostGroup, { status: 200 });
+  } catch (error: any) {
+    console.error(error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

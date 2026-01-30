@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { postId, imageUrl, caption , type } = body as {postId : string,imageUrl : string , caption : string ,type : PostType };
+    const { postId, imageUrl, caption , type,userTags } = body as {postId : string,imageUrl : string , caption : string ,type : PostType,userTags:string[] };
 
     if (!postId && type == "GROUPED" ) {
       return NextResponse.json(
@@ -36,7 +36,8 @@ export async function POST(req: Request) {
         imageUrl,
         caption,
         type,
-        userId
+        userId,
+        userTags
       },
     });
 

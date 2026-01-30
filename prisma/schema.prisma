@@ -39,6 +39,10 @@ model PostGroup {
   description    String?
   postItems      PostItem[]
   imageUrl String?
+
+  userTags  String[] 
+  hashtags  String?
+
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
 }
@@ -54,6 +58,10 @@ model PostItem {
   userId       String
   user    User @relation(fields: [userId] , references: [id])
   status PostStatus @default(DRAFT)
+  userTags  String[] 
+
+  hashtags  String?
+
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
 
@@ -90,3 +98,10 @@ model SystemConfig {
   updatedAt DateTime @updatedAt
 }
 
+
+model UserTag {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  username  String   @unique // Ensures no duplicate tags
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

@@ -57,7 +57,7 @@ export async function POST(
     }
 
     const dimentions = {
-      Post: { height: 1080, width: 1080 },
+      Post: { height: 1350, width: 1080 },
       Reel: { height: 1920, width: 1080 },
       Story: { height: 1920, width: 1080 },
     };
@@ -88,14 +88,30 @@ export async function POST(
     const filePath = path.join(templatesDir, template.html);
 
     const hbsSource = await fs.readFile(filePath, "utf-8");
+
+    // hightlight the text
+    Handlebars.registerHelper("highlight", function (text: string) {
+      if (!text) return "";
+      return new Handlebars.SafeString(
+        text.replace(
+          /\|(.*?)\|/g,
+          '<span style="color: var(--cinema-yellow);">$1</span>',
+        ),
+      );
+    });
+
+
     const compiled = Handlebars.compile(hbsSource);
     const renderedHTML = compiled(finalVars);
 
     // -------------------- PUPPETEER --------------------
     const browser = await puppeteer.launch({
-      executablePath: process.env.NODE_ENV == "development" ? process.env.CHROME_PATH : await chromium.executablePath(), // <-- critical
-      headless: true,                      // <-- stable for Render
-      args: chromium.args,                              // <-- sandbox/dev shm flags
+      executablePath:
+        process.env.NODE_ENV == "development"
+          ? process.env.CHROME_PATH
+          : await chromium.executablePath(), // <-- critical
+      headless: true, // <-- stable for Render
+      args: chromium.args, // <-- sandbox/dev shm flags
     });
 
     const page = await browser.newPage();

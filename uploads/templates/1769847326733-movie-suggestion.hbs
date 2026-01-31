@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cinefriends Ultimate Rec</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Theme Variables */
+            --cinema-brown: #2C1810;
+            --cinema-yellow: #FFB300;
+            --text-light: #F5F5F5;
+            --text-dim: rgba(245, 245, 245, 0.65);
+            --line-color: rgba(255, 179, 0, 0.25);
+            
+            --font-main: 'Inter', sans-serif;
+            --font-display: 'Oswald', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .preview-scale-wrapper {
+            transform-origin: center;
+        }
+
+        .post-container {
+            width: 1080px;
+            height: 1350px;
+            background-color: var(--cinema-brown);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .texture-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('https://www.transparenttextures.com/patterns/stardust.png');
+            opacity: 0.5;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .rec-header {
+            width: 100%;
+            height: 90px;
+            background: var(--cinema-yellow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 60px;
+            z-index: 10;
+        }
+
+        .rec-title-group { display: flex; align-items: center; gap: 15px; }
+        .rec-icon { width: 32px; height: 32px; fill: var(--cinema-brown); }
+        
+        .rec-text {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 34px;
+            color: var(--cinema-brown);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .rec-count {
+            font-family: var(--font-display);
+            font-size: 34px;
+            font-weight: 700;
+            color: var(--cinema-brown);
+            border: 3px solid var(--cinema-brown);
+            padding: 2px 12px;
+            border-radius: 6px;
+        }
+
+        .image-section {
+            width: 100%;
+            height: 480px; 
+            position: relative;
+            z-index: 1;
+        }
+
+        .movie-img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            object-position: center 15%;
+        }
+
+        .gradient-overlay {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 150px;
+            background: linear-gradient(to bottom, transparent 0%, var(--cinema-brown) 100%);
+        }
+
+        .data-container {
+            flex: 1;
+            padding: 20px 60px 50px 60px;
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .split-section {
+            display: flex;
+            gap: 40px;
+            margin-bottom: 30px;
+            align-items: flex-start;
+        }
+
+        .left-col {
+            flex: 1.4;
+        }
+
+        .right-col {
+            flex: 1;
+            padding-top: 15px;
+        }
+
+        .movie-title {
+            font-family: var(--font-display);
+            font-size: 76px;
+            line-height: 0.9;
+            color: var(--text-light);
+            text-transform: uppercase;
+            margin-bottom: 15px;
+        }
+        .movie-title span { color: var(--cinema-yellow); }
+
+        .quick-stats {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            font-family: var(--font-main);
+            color: var(--text-dim);
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+        .separator { width: 5px; height: 5px; background: var(--cinema-yellow); border-radius: 50%; }
+
+        .genre-row { display: flex; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; }
+
+        .genre-badge {
+            background: transparent;
+            border: 2px solid var(--cinema-yellow);
+            color: var(--cinema-yellow);
+            font-family: var(--font-display);
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .mini-info-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .grid-item { display: flex; flex-direction: column; }
+        .label {
+            color: var(--cinema-yellow);
+            font-family: var(--font-display);
+            font-size: 14px;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+            opacity: 0.9;
+        }
+        .value {
+            color: var(--text-light);
+            font-family: var(--font-main);
+            font-size: 18px;
+            font-weight: 500;
+            line-height: 1.3;
+        }
+
+        .plot-text {
+            font-family: var(--font-main);
+            color: rgba(245, 245, 245, 0.9);
+            font-size: 20px; 
+            line-height: 1.6;
+            text-align: left;
+            border-left: 4px solid var(--cinema-yellow);
+            padding-left: 20px;
+        }
+
+        .visual-gallery {
+            display: flex;
+            gap: 15px;
+            height: 290px;
+            width: 100%;
+            margin-top: auto;
+            margin-bottom: 20px;
+        }
+
+        .gallery-frame {
+            flex: 1;
+            border: 2px solid var(--cinema-yellow);
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .gallery-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .handle-wrapper {
+            width: 100%;
+            text-align: right;
+        }
+        .handle {
+            color: var(--cinema-yellow);
+            font-family: var(--font-display);
+            font-size: 24px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            font-weight: 700;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<script>
+  if (window.Handlebars) {
+    Handlebars.registerHelper("highlight", function (text) {
+      if (!text) return "";
+      return new Handlebars.SafeString(
+        text.replace(/\|(.*?)\|/g, '<span style="color: var(--cinema-yellow);">$1</span>')
+      );
+    });
+  }
+</script>
+<body>
+
+<div class="preview-scale-wrapper">
+<div class="post-container">
+<div class="texture-overlay"></div>
+
+<div class="rec-header">
+    <div class="rec-title-group">
+        <svg class="rec-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+        <span class="rec-text">Movie Recommendation</span>
+    </div>
+    <div class="rec-count">{{number}}</div>
+</div>
+
+<div class="image-section">
+    <img src="{{main_image}}" class="movie-img" alt="Movie Poster">
+    <div class="gradient-overlay"></div>
+</div>
+
+<div class="data-container">
+<div class="split-section">
+
+<div class="left-col">
+    <h1 class="movie-title">{{{highlight movie_name}}}</h1>
+
+    <div class="quick-stats">
+        <span>{{year}}</span>
+        <div class="separator"></div>
+        <span>{{duration}}</span>
+    </div>
+
+    <div class="genre-row">
+        {{#each genres}}
+        <span class="genre-badge">{{this}}</span>
+        {{/each}}
+    </div>
+
+    <div class="mini-info-grid">
+        <div class="grid-item">
+            <span class="label">Director</span>
+            <span class="value">{{director}}</span>
+        </div>
+        <div class="grid-item">
+            <span class="label">Starring</span>
+            <span class="value">{{stars}}</span>
+        </div>
+    </div>
+</div>
+
+<div class="right-col">
+    <p class="plot-text">
+        {{{highlight description}}}
+    </p>
+</div>
+
+</div>
+
+<div class="visual-gallery">
+    {{#each screenshots}}
+    <div class="gallery-frame">
+        <img src="{{this}}" alt="Scene">
+    </div>
+    {{/each}}
+</div>
+
+<div class="handle-wrapper">
+    <div class="handle">@cinefriendsofficial</div>
+</div>
+
+</div>
+</div>
+</div>
+
+</body>
+</html>

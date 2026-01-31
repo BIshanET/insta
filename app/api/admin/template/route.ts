@@ -65,13 +65,13 @@ export async function POST(req: Request) {
     const name = formData.get("name") as string;
     const variablesRaw = formData.get("variables") as string;
     const file = formData.get("file") as File;
-   
+
     const type: "Post" | "PostGroup" = formData.get("type") as
       | "Post"
       | "PostGroup";
-    const contentType:contentType = formData.get("contentType") as contentType
+    const contentType: contentType = formData.get("contentType") as contentType;
 
-    const height: number = contentType == "Reel" ? 1920 : 1080
+    const height: number = contentType == "Reel" ? 1920 : 1350;
     const width: number = 1080;
 
     if (!name || !file) {
@@ -105,6 +105,18 @@ export async function POST(req: Request) {
         testVariables[v.key] = v.default || "Sample Text";
       });
     }
+
+    // hightlighting the text
+
+    Handlebars.registerHelper("highlight", function (text: string) {
+      if (!text) return "";
+      return new Handlebars.SafeString(
+        text.replace(
+          /\|(.*?)\|/g,
+          '<span style="color: var(--cinema-yellow);">$1</span>',
+        ),
+      );
+    });
 
     const templateSource = await fs.readFile(filePath, "utf-8");
     const compile = Handlebars.compile(templateSource);
@@ -144,7 +156,7 @@ export async function POST(req: Request) {
         variables,
         thumbnail: thumbnailUrl,
         type,
-        contentType
+        contentType,
       },
     });
 

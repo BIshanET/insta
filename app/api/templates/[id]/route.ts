@@ -66,6 +66,7 @@ export async function POST(
     const width = dimentions[template.contentType].width;
 
     const bodyVars = await req.json();
+    console.log("bodyyyy",bodyVars)
 
     const finalVars: Record<string, any> = {};
     ((template.variables as any) || []).forEach((v: any) => {

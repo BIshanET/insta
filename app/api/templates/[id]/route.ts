@@ -124,7 +124,7 @@ export async function POST(
     const page = await browser.newPage();
     await page.setViewport({ width: width, height: height });
 
-    await page.setContent(renderedHTML, { waitUntil: "domcontentloaded" });
+    await page.setContent(renderedHTML, { waitUntil: "networkidle0" });
 
     const buffer = await page.screenshot({ type: "png" });
     await browser.close();

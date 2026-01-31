@@ -9,10 +9,16 @@ import { uploadToBbImage } from "@/app/lib/uploadToBbImage";
 
 const prisma = new PrismaClient();
 
+const hardFail = (err: any) => {
+  console.error("FATAL:", err);
+  process.exit(1); // Render will restart
+};
+
 export async function POST(
   req: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
+  let browser;
   try {
     if (process.env.VERCEL === "1") {
       const config = await prisma.systemConfig.findUnique({
@@ -106,7 +112,7 @@ export async function POST(
     const renderedHTML = compiled(finalVars);
 
     // -------------------- PUPPETEER --------------------
-    const browser = await puppeteer.launch({
+     browser = await puppeteer.launch({
       executablePath:
         process.env.NODE_ENV == "development"
           ? process.env.CHROME_PATH
@@ -118,7 +124,7 @@ export async function POST(
     const page = await browser.newPage();
     await page.setViewport({ width: width, height: height });
 
-    await page.setContent(renderedHTML, { waitUntil: "networkidle0" });
+    await page.setContent(renderedHTML, { waitUntil: "domcontentloaded" });
 
     const buffer = await page.screenshot({ type: "png" });
     await browser.close();
@@ -131,9 +137,13 @@ export async function POST(
     });
   } catch (err: any) {
     console.error(err);
-    return NextResponse.json(
-      { error: err.message || "Internal Server Error" },
-      { status: 500 },
-    );
+    hardFail(err)
+   
+  }finally {
+  if (browser) {
+    try {
+      await browser.close();
+    } catch {}
   }
+}
 }

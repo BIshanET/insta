@@ -60,14 +60,12 @@
             object-position: center 20%;
         }
 
-        /* Top Gradient for Header Readability */
         .gradient-top {
             position: absolute; top: 0; left: 0; width: 100%; height: 200px;
             background: linear-gradient(to bottom, rgba(44, 24, 16, 1) 0%, rgba(44, 24, 16, 0.8) 40%, transparent 100%);
             z-index: 5;
         }
 
-        /* Bottom Gradient to blend into content */
         .gradient-bottom {
             position: absolute; bottom: 0; left: 0; width: 100%; height: 200px;
             background: linear-gradient(to top, var(--cinema-brown) 0%, transparent 100%);
@@ -105,6 +103,7 @@
             color: var(--cinema-yellow);
             padding: 2px 18px;
             border-radius: 8px;
+            border: 4px solid var(--cinema-yellow);
         }
 
         /* DATA CONTAINER */
@@ -117,7 +116,7 @@
             margin-top: -40px; 
         }
 
-        /* TOP SECTION */
+        /* TOP SECTION logic */
         .top-info-split {
             display: flex;
             gap: 40px;
@@ -129,6 +128,11 @@
             flex: 1.4;
             display: flex;
             flex-direction: column;
+        }
+
+        /* Condition for 100% width when screenshots are missing */
+        .left-info-col.full-width {
+            flex: 1;
         }
 
         .movie-title {
@@ -271,7 +275,8 @@
             
             <div class="top-info-split">
                 
-                <div class="left-info-col">
+                <!-- If screenshots are empty, we add 'full-width' class -->
+                <div class="left-info-col {{#unless screenshots}}full-width{{/unless}}">
                     <h1 class="movie-title">{{{highlight movie_name}}}</h1>
 
                     <div class="quick-stats">
@@ -298,6 +303,8 @@
                     </div>
                 </div>
 
+                <!-- Only render the gallery if screenshots exist -->
+                {{#if screenshots}}
                 <div class="right-gallery-col">
                     {{#each screenshots}}
                     <div class="gallery-frame">
@@ -305,6 +312,7 @@
                     </div>
                     {{/each}}
                 </div>
+                {{/if}}
 
             </div>
 

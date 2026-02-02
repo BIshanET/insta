@@ -3,9 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{title}}</title>
     <style>
-        /* Base Setup for Desktop Preview */
         body {
             margin: 0;
             padding: 0;
@@ -17,10 +15,6 @@
             font-family: 'Helvetica Neue', Arial, sans-serif;
         }
 
-        .viewport-scaler {
-         
-        }
-
         .reel-canvas {
             width: 1080px;
             height: 1920px;
@@ -29,7 +23,6 @@
             flex-direction: column;
             align-items: center;
             position: relative;
-            box-shadow: 0 60px 120px rgba(0,0,0,0.6);
         }
 
         .safe-zone-content {
@@ -46,27 +39,15 @@
             gap: 25px;
         }
 
-        .cover-stack {
-            display: flex;
-            gap: 15px;
-        }
-
         .art-box {
             width: 200px;
             height: 200px;
             border-radius: 30px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             overflow: hidden;
             box-shadow: 0 15px 30px rgba(0,0,0,0.1);
-        }
-
-        .art-red { background-color: #B6371A; }
-
-        .art-image {
             background: url('{{coverImage}}');
             background-size: cover;
+            background-position: center;
         }
 
         .header-text h1 {
@@ -75,13 +56,6 @@
             margin: 0;
             line-height: 0.9;
             font-weight: 800;
-        }
-
-        .header-text p {
-            color: #333;
-            font-size: 36px;
-            margin: 5px 0;
-            opacity: 0.8;
         }
 
         .header-text .label {
@@ -115,11 +89,7 @@
             margin-right: 30px;
         }
 
-        .play-circle svg {
-            width: 35px;
-            fill: white;
-            margin-left: 5px;
-        }
+        .play-circle svg { width: 35px; fill: white; margin-left: 5px; }
 
         .song-meta { flex-grow: 1; }
 
@@ -143,12 +113,8 @@
         }
 
         .heart svg { width: 40px; fill: #B6371A; }
-
         .more { display: flex; gap: 6px; }
-
         .dot { width: 8px; height: 8px; background: #333; border-radius: 50%; }
-
-        .snowflake { width: 100px; fill: white; }
 
         .footer-logo {
             position: absolute;
@@ -164,19 +130,14 @@
 </head>
 <body>
 
-<div class="viewport-scaler">
     <div class="reel-canvas">
-
         <div class="safe-zone-content">
             <!-- Header -->
             <div class="header">
-                <div class="cover-stack">
-                    <div class="art-box art-image"></div>
-                </div>
+                <div class="art-box"></div>
                 <div class="header-text">
                     <h1>{{headerTitle}}</h1>
-                    <p>{{headerSubtitle}}</p>
-                    <div class="label">{{headerLabel}}</div>
+                    <div class="label">Top Tracks</div>
                 </div>
             </div>
 
@@ -188,22 +149,16 @@
                         <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                     </div>
                     <div class="song-meta">
-                        <div class="song-title">{{title}}</div>
-                        <div class="song-artist">{{artist}}</div>
+                        <div class="song-title">{{this}}</div>
+                        <!-- Lookup artist from artists array at the current loop index -->
+                        <div class="song-artist">{{lookup ../artists @index}}</div>
                     </div>
                     <div class="actions">
                         <div class="heart">
-                            <svg viewBox="0 0 24 24">
-                                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5
-                                         2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09
-                                         C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42
-                                         22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                            </svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09 C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
                         </div>
                         <div class="more">
-                            <div class="dot"></div>
-                            <div class="dot"></div>
-                            <div class="dot"></div>
+                            <div class="dot"></div><div class="dot"></div><div class="dot"></div>
                         </div>
                     </div>
                 </div>
@@ -211,11 +166,8 @@
             </div>
         </div>
 
-        <!-- Footer Website -->
-        <div class="footer-logo">{{footerText}}</div>
-
+        <div class="footer-logo">@cinefriendsofficial</div>
     </div>
-</div>
 
 </body>
 </html>

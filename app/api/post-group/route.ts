@@ -50,6 +50,8 @@ export async function GET(req: Request) {
       nextCursor = nextItem?.id || null;
     }
 
+    console.log("logssss",groups)
+
     return NextResponse.json(
       {
         posts: groups,

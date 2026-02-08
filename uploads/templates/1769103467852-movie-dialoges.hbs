@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cinema Subtitle Stack</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+    <title>Cinefriends Dialogue Editorial - HBS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --cinema-brown: #2C1810;
@@ -22,118 +22,195 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            font-family: var(--font-main);
         }
 
-        /* Scaling for Desktop Preview */
-        .preview-scale-wrapper {
-            transform-origin: center;
-        }
-
-        /* --- INSTAGRAM REEL CONTAINER (1080x1920) --- */
-        .reel-container {
+        /* --- POST CONTAINER (1080x1350) --- */
+        .post-container {
             width: 1080px;
-            height: 1920px;
+            height: 1350px;
             background-color: var(--cinema-brown);
-            display: flex;
-            flex-direction: column; /* Stacks items vertically */
             position: relative;
             overflow: hidden;
+            display: flex;
+            box-shadow: 0 50px 100px rgba(0,0,0,0.8);
         }
 
-        /* Global Texture Overlay */
         .texture-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background-image: url('https://www.transparenttextures.com/patterns/stardust.png');
-            opacity: 0.4;
+            opacity: 0.3;
             pointer-events: none;
             z-index: 50;
         }
 
-        /* --- THE STACK ITEM --- */
-        .dialogue-block {
-            flex: 1; /* Automatically adjusts height based on number of items */
-            position: relative;
-            overflow: hidden;
-            border-bottom: 4px solid var(--cinema-yellow);
-            display: flex;
-            justify-content: center;
-        }
-
-        .dialogue-block:last-child {
-            border-bottom: none;
-        }
-
-        /* Background Image */
-        .bg-img {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            object-fit: cover;
+        .logo-blended {
+            position: absolute;
+            bottom: -50px;
+            right: -100px;
+            width: 900px;
+            height: 900px;
+            background-image: url('https://i.ibb.co/qMZ7cskj/output-onlinepngtools-1.jpg');
+            background-size: contain;
+            background-repeat: no-repeat;
+            filter: sepia(1) saturate(3) brightness(0.4) contrast(1.2);
+            mix-blend-mode: screen; 
+            opacity: 0.12;
             z-index: 1;
         }
 
-        /* Gradient Overlay - Focused on the bottom for subtitles */
-        .gradient-overlay {
-            position: absolute; 
-            bottom: 0; left: 0; width: 100%; height: 60%;
-            background: linear-gradient(
-                to top, 
-                rgba(44, 24, 16, 0.95) 0%, 
-                rgba(44, 24, 16, 0.5) 40%,
-                rgba(44, 24, 16, 0) 100%
-            );
+        /* --- VERTICAL SIDEBAR --- */
+        .sidebar {
+            width: 140px;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.25);
+            border-right: 2px solid rgba(255, 179, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .sidebar-text {
+            font-family: var(--font-display);
+            color: var(--cinema-yellow);
+            font-size: 44px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 10px;
+            transform: rotate(-180deg);
+            writing-mode: vertical-lr;
+            white-space: nowrap;
+            opacity: 0.8;
+        }
+
+        /* --- MAIN CONTENT AREA --- */
+        .content-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 60px 60px 60px 40px;
+            gap: 45px; 
+            position: relative;
+            z-index: 10;
+            /* Centers the cards vertically if they don't fill the screen */
+            justify-content: center; 
+        }
+
+        .dialogue-card {
+            flex: 1;
+            position: relative;
+            width: 100%;
+            /* PREVENTS images from becoming too tall when there are only 1 or 2 */
+            max-height: 520px; 
+            /* Minimum height to ensure it doesn't look like a tiny strip */
+            min-height: 320px;
+            
+            border: 6px solid var(--cinema-yellow);
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.6);
+            background-color: #000;
+        }
+
+        .card-img {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover;
+            filter: contrast(1.1) brightness(0.85);
+        }
+
+        .subtitle-gradient {
+            position: absolute;
+            bottom: 0; left: 0; width: 100%; height: 55%;
+            background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 50%, transparent 100%);
             z-index: 2;
         }
 
-        /* Subtitle Container */
-        .subtitle-wrapper {
+        .subtitle-content {
             position: absolute;
-            bottom: 45px; /* Positioned at bottom center */
-            z-index: 10;
-            width: 90%;
+            bottom: 35px;
+            left: 0;
+            width: 100%;
+            padding: 0 40px;
             text-align: center;
+            z-index: 3;
         }
 
-        /* Subtitle Text Style */
         .subtitle-text {
             font-family: var(--font-main);
             color: var(--cinema-yellow);
-            font-size: 42px;
+            font-size: 34px;
             line-height: 1.4;
-            font-weight: 600;
-            text-shadow: 2px 2px 0px #000, 0 0 8px rgba(0,0,0,0.8);
-            letter-spacing: 0.5px;
+            font-weight: 700;
+            letter-spacing: 0.2px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.9);
         }
 
-        /* White accent span for emphasis if needed */
         .subtitle-text span {
             color: var(--text-light);
         }
+
+        .handle {
+            position: absolute;
+            bottom: 30px;
+            right: 60px;
+            font-family: var(--font-display);
+            color: var(--cinema-yellow);
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            opacity: 0.35;
+            z-index: 100;
+        }
+
     </style>
 </head>
+
+<script>
+  // Handlebars Helper for |highlighting|
+  if (window.Handlebars) {
+    Handlebars.registerHelper("highlight", function (text) {
+      if (!text) return "";
+      return new Handlebars.SafeString(
+        text.replace(/\|(.*?)\|/g, '<span>$1</span>')
+      );
+    });
+  }
+</script>
+
 <body>
 
-    <div class="preview-scale-wrapper">
-        
-        <div class="reel-container">
-            <div class="texture-overlay"></div>
+    <div class="post-container">
+        <div class="texture-overlay"></div>
+        <div class="logo-blended"></div>
 
-            <!-- Loop Logic: Iterates through 'texts' array. 
-                 Uses @index to lookup the matching image. -->
+        <div class="sidebar">
+            <h2 class="sidebar-text">
+                {{#if sidebar_title}}{{sidebar_title}}{{else}}Cinematic Dialogue{{/if}}
+            </h2>
+        </div>
+
+        <div class="content-area">
+            
             {{#each texts}}
-            <div class="dialogue-block">
+            <div class="dialogue-card">
                 <!-- Look up image from 'images' array at current index -->
-                <img src="{{lookup ../images @index}}" class="bg-img" alt="Scene Image">
+                <img src="{{lookup ../images @index}}" class="card-img" alt="Movie Frame">
                 
-                <div class="gradient-overlay"></div>
-                
-                <div class="subtitle-wrapper">
-                    <!-- Triple braces allow for HTML like <span> or <br> -->
-                    <p class="subtitle-text">{{{this}}}</p>
+                <div class="subtitle-gradient"></div>
+                <div class="subtitle-content">
+                    <!-- Triple braces used to render the <span> from the helper -->
+                    <p class="subtitle-text">{{{highlight this}}}</p>
                 </div>
             </div>
             {{/each}}
 
         </div>
 
+        <div class="handle">{{#if handle}}{{handle}}{{else}}@cinefriendsofficial{{/if}}</div>
     </div>
 
 </body>

@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cinema Quotes Stack</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+    <title>Cinefriends Editorial Quotes - HBS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --cinema-brown: #2C1810;
@@ -22,154 +22,209 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            font-family: var(--font-main);
         }
 
-        /* Scaling for Desktop Preview */
-        .preview-scale-wrapper {
-            transform: scale(0.45); 
-            transform-origin: center;
-        }
-
-        /* --- INSTAGRAM REEL CONTAINER (1080x1920) --- */
-        .reel-container {
+        /* --- POST CONTAINER (1080x1350) --- */
+        .post-container {
             width: 1080px;
-            height: 1920px;
+            height: 1350px;
             background-color: var(--cinema-brown);
-            display: flex;
-            flex-direction: column; /* Stacks items vertically */
             position: relative;
             overflow: hidden;
+            display: flex;
+            box-shadow: 0 50px 100px rgba(0,0,0,0.8);
         }
 
-        /* Global Texture Overlay */
+        /* Texture Overlay */
         .texture-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background-image: url('https://www.transparenttextures.com/patterns/stardust.png');
-            opacity: 0.4;
+            opacity: 0.3;
             pointer-events: none;
             z-index: 50;
         }
 
-        /* --- THE STACK ITEM --- */
-        /* flex: 1 makes this div grow to fill available space equally based on number of items */
-        .quote-block {
-            flex: 1; 
-            position: relative;
-            overflow: hidden;
-            border-bottom: 4px solid var(--cinema-yellow);
+        /* Background Logo Foundation */
+        .logo-bg {
+            position: absolute;
+            bottom: -100px;
+            right: -100px;
+            width: 800px;
+            height: 800px;
+            background-image: url('https://i.ibb.co/qMZ7cskj/output-onlinepngtools-1.jpg');
+            background-size: contain;
+            background-repeat: no-repeat;
+            filter: sepia(1) brightness(0.4) contrast(1.2);
+            opacity: 0.1;
+            z-index: 1;
+            transform: rotate(-15deg);
+        }
+
+        /* --- VERTICAL SIDEBAR (Conditional) --- */
+        .sidebar {
+            width: 140px;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-right: 2px solid rgba(255, 179, 0, 0.3);
             display: flex;
             align-items: center;
             justify-content: center;
+            position: relative;
+            z-index: 10;
         }
 
-        .quote-block:last-child {
-            border-bottom: none;
+        .sidebar-text {
+            font-family: var(--font-display);
+            color: var(--cinema-yellow);
+            font-size: 50px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 12px;
+            transform: rotate(-180deg);
+            writing-mode: vertical-lr;
+            white-space: nowrap;
+            opacity: 0.8;
         }
 
-        /* Background Image */
-        .bg-img {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        /* --- MAIN CONTENT AREA --- */
+        .content-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 60px 60px 60px 40px;
+            gap: 40px;
+            position: relative;
+            z-index: 10;
+            justify-content: center;
+        }
+
+        /* Layout adjustment if Sidebar is hidden */
+        .content-area.full-width {
+            padding: 60px;
+        }
+
+        .quote-card {
+            flex: 1;
+            position: relative;
+            border: 6px solid var(--cinema-yellow);
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            background-color: #000;
+            max-height: 520px; /* Prevents cards from being too tall with fewer items */
+        }
+
+        .card-img {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
             object-fit: cover;
-            z-index: 1;
+            opacity: 0.7;
+            filter: contrast(1.1) brightness(0.8);
         }
 
-        /* Gradient Overlay for Readability */
-        .gradient-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(
-                to bottom, 
-                rgba(44, 24, 16, 0.3) 0%, 
-                rgba(44, 24, 16, 0.6) 50%,
-                rgba(44, 24, 16, 0.95) 100%
-            );
+        .card-gradient {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 60%);
             z-index: 2;
         }
 
-        /* Text Content */
-        .content-wrapper {
-            position: relative;
-            z-index: 10;
-            width: 85%;
-            text-align: center;
-            padding: 20px;
+        .card-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 30px 40px;
+            z-index: 3;
         }
 
         .quote-text {
             font-family: var(--font-display);
             color: var(--text-light);
-            font-size: 48px;
-            line-height: 1.3;
+            font-size: 42px;
+            line-height: 1.1;
             text-transform: uppercase;
             font-weight: 700;
-            text-shadow: 0 4px 10px rgba(0,0,0,0.8);
+            margin-bottom: 10px;
+            letter-spacing: -1px;
         }
 
-        .quote-mark {
-            color: var(--cinema-yellow);
-            font-size: 1.2em;
-            vertical-align: -5px;
-            margin: 0 5px;
-        }
-
-        .quote-source {
+        .quote-movie {
             font-family: var(--font-main);
             color: var(--cinema-yellow);
-            font-size: 24px;
-            font-weight: 600;
-            margin-top: 15px;
-            letter-spacing: 2px;
+            font-size: 20px;
+            font-weight: 700;
             text-transform: uppercase;
-            opacity: 0.9;
+            letter-spacing: 4px;
         }
 
-        /* --- BRANDING FOOTER --- */
-        .branding {
+        /* Handle Branding */
+        .handle {
             position: absolute;
-            bottom: 40px;
-            left: 0;
-            width: 100%;
-            text-align: center;
-            z-index: 100;
+            bottom: 30px;
+            right: 60px;
             font-family: var(--font-display);
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 24px;
+            color: var(--cinema-yellow);
+            font-size: 22px;
+            font-weight: 500;
             letter-spacing: 4px;
-            text-transform: uppercase;
+            opacity: 0.4;
+            z-index: 100;
         }
+
+        .highlight {
+            color: var(--cinema-yellow);
+        }
+
     </style>
 </head>
+
+<script>
+  if (window.Handlebars) {
+    Handlebars.registerHelper("highlight", function (text) {
+      if (!text) return "";
+      return new Handlebars.SafeString(
+        text.replace(/\|(.*?)\|/g, '<span class="highlight">$1</span>')
+      );
+    });
+  }
+</script>
+
 <body>
 
-    <div class="preview-scale-wrapper">
-        
-        <div class="reel-container">
-            <div class="texture-overlay"></div>
+    <div class="post-container">
+        <div class="texture-overlay"></div>
+        <div class="logo-bg"></div>
 
-            <!-- Loop Logic: Iterates through 'quotes' array. 
-                 Uses @index to find matching image and movie from the other arrays. -->
+        <!-- Conditional Sidebar -->
+        {{#if sidebar_title}}
+        <div class="sidebar">
+            <h2 class="sidebar-text">{{sidebar_title}}</h2>
+        </div>
+        {{/if}}
+
+        <!-- Main Content Area -->
+        <div class="content-area {{#unless sidebar_title}}full-width{{/unless}}">
+            
             {{#each quotes}}
-            <div class="quote-block">
-                <!-- Look up image from 'images' array at current index -->
-                <img src="{{lookup ../images @index}}" class="bg-img" alt="Movie Scene">
+            <div class="quote-card">
+                <!-- Background lookup -->
+                <img src="{{lookup ../images @index}}" class="card-img" alt="Scene">
                 
-                <div class="gradient-overlay"></div>
+                <div class="card-gradient"></div>
                 
-                <div class="content-wrapper">
-                    <p class="quote-text">
-                        <span class="quote-mark">“</span>
-                        {{this}}
-                        <span class="quote-mark">”</span>
-                    </p>
-                    <!-- Look up movie name from 'movies' array at current index -->
-                    <p class="quote-source">- {{lookup ../movies @index}}</p>
+                <div class="card-content">
+                    <p class="quote-text">{{{highlight this}}}</p>
+                    <!-- Movie name lookup -->
+                    <p class="quote-movie">{{lookup ../movies @index}}</p>
                 </div>
             </div>
             {{/each}}
 
-            <div class="branding">@cinefriendsofficial</div>
-
         </div>
 
+        <div class="handle">{{#if handle}}{{handle}}{{else}}@cinefriendsofficial{{/if}}</div>
     </div>
 
 </body>

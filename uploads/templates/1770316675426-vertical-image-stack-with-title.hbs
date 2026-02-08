@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cinefriends Film Strip - HBS</title>
+    <title>Cinefriends Film Strip - Edge Blending Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Oswald:wght@700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -12,8 +12,6 @@
             --text-light: #F5F5F5;
             --font-main: 'Inter', sans-serif;
             --font-display: 'Oswald', sans-serif;
-            
-            /* Dynamic Font Size Logic */
             --title-size: {{#if titleFontSize}}{{titleFontSize}}px{{else}}60px{{/if}};
         }
 
@@ -28,7 +26,6 @@
             font-family: var(--font-main);
         }
 
-        /* 1080x1350 Portrait Container */
         .post-container {
             width: 1080px;
             height: 1350px;
@@ -37,34 +34,22 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            /* Pushes content to start from the top */
             justify-content: flex-start; 
             overflow: hidden;
             box-shadow: 0 50px 100px rgba(0,0,0,0.8);
         }
 
-        /* Static Background Layer */
         .bg-image-layer {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
             background-image: url('https://i.ibb.co/qMZ7cskj/output-onlinepngtools-1.jpg');
             background-size: cover;
             background-position: left center;
-            background-repeat: no-repeat;
-            filter: grayscale(100%) brightness(0.5) contrast(120%); 
+            filter: grayscale(100%) brightness(0.5); 
             opacity: 0.18; 
             z-index: 1;
         }
 
-        .texture-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background-image: url('https://www.transparenttextures.com/patterns/stardust.png');
-            opacity: 0.3;
-            pointer-events: none;
-            z-index: 2;
-        }
-
-        /* Header / Title Section */
         .header-section {
             margin-top: 80px;
             margin-bottom: 50px;
@@ -80,10 +65,8 @@
             text-transform: uppercase;
             letter-spacing: 1px;
             line-height: 1.1;
-            text-shadow: 0 10px 20px rgba(0,0,0,0.9);
         }
 
-        /* VERTICAL STACK CONTAINER */
         .stack-wrapper {
             width: 920px;
             display: flex;
@@ -92,54 +75,81 @@
             z-index: 10;
         }
 
-        /* Spacing for when title is hidden */
-        .no-title-spacing {
-            margin-top: 120px;
-        }
+        .no-title-spacing { margin-top: 120px; }
 
-        /* Individual Stack Item */
         .stack-item {
-            height: 300px; 
+            height: 320px; 
             width: 100%;
             position: relative;
             overflow: hidden;
             border: 6px solid var(--cinema-yellow);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
             background-color: #000;
+            display: flex;
+            justify-content: center; 
+            align-items: center;
         }
 
-        .stack-item img {
-            width: 100%;
+        .item-bg-blur {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-size: cover;
+            background-position: center;
+            filter: blur(40px) brightness(0.3);
+            transform: scale(1.3);
+            z-index: 1;
+        }
+
+        /* Image remains at 70% min-width as requested */
+        .stack-item img.main-img {
+            position: relative;
             height: 100%;
-            object-fit: cover;
-            /* Ensures the top origin of the image is prioritized */
-            object-position: top; 
-            display: block;
+            min-width: 70%; 
+            max-width: 100%; 
+            object-fit: cover; 
+            z-index: 2;
+        }
+
+        /* UPDATED GRADIENT LOGIC */
+        .item-edge-blend {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 3;
+            background: 
+                /* 
+                   Left: Solid black for 20% to swallow the image edge, 
+                   then fades to transparent at 45% 
+                */
+                linear-gradient(to right, #000 0%, #000 20%, transparent 45%),
+                /* 
+                   Right: Solid black for 20%, fades to transparent at 45% 
+                */
+                linear-gradient(to left, #000 0%, #000 20%, transparent 45%),
+                /* Top/Bottom masks */
+                linear-gradient(to top, #000 0%, transparent 15%),
+                linear-gradient(to bottom, #000 0%, transparent 15%);
+            pointer-events: none;
         }
 
         .item-gradient {
             position: absolute;
             bottom: 0; left: 0; width: 100%; height: 70%;
-            background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, transparent 100%);
-            z-index: 2;
+            background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%);
+            z-index: 4;
         }
 
         .item-caption {
             position: absolute;
             bottom: 15px; left: 25px; right: 25px;
-            z-index: 3;
+            z-index: 5;
             color: var(--text-light);
             font-family: var(--font-main);
             font-size: 26px;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            text-shadow: 2px 2px 8px #000;
         }
 
-        span.highlight {
-            color: var(--cinema-yellow);
-        }
+        span.highlight { color: var(--cinema-yellow); }
 
         .footer-brand {
             position: absolute;
@@ -169,22 +179,24 @@
 
     <div class="post-container">
         <div class="bg-image-layer"></div>
-        <div class="texture-overlay"></div>
 
-        <!-- Conditional Title Section -->
         {{#if title}}
         <div class="header-section">
             <h1 class="post-title">{{{highlight title}}}</h1>
         </div>
         {{/if}}
 
-        <!-- Vertical Stack Loop -->
         <div class="stack-wrapper {{#unless title}}no-title-spacing{{/unless}}">
             
             {{#each images}}
             <div class="stack-item">
-                <img src="{{this}}" alt="Scene {{@index}}">
+                <div class="item-bg-blur" style="background-image: url('{{this}}');"></div>
                 
+                <img src="{{this}}" class="main-img" alt="Scene {{@index}}">
+                
+                <!-- New intense edge blend -->
+                <div class="item-edge-blend"></div>
+
                 {{#if ../captions}}
                     {{#with (lookup ../captions @index) as |currentCaption|}}
                         {{#if currentCaption}}

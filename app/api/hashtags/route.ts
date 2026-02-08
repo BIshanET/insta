@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
   });
 
   const prompt = `
-Generate 40 viral and trending Instagram hashtags for the following caption.
+Generate 30 viral and trending Instagram hashtags for the following caption.
 
 Caption:
 "${caption}"

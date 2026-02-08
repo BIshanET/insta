@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cinefriends Ultimate Rec</title>
+    <title>Cinefriends Ultimate Rec - HBS Premium</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -13,6 +13,10 @@
             --text-dim: rgba(245, 245, 245, 0.75);
             --font-main: 'Inter', sans-serif;
             --font-display: 'Oswald', sans-serif;
+            
+            /* Dynamic Font Size Logic */
+            --title-size-val: {{#if title_size}}{{title_size}}px{{else}}95px{{/if}};
+            --desc-size-val: {{#if description_size}}{{description_size}}px{{else}}32px{{/if}};
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -25,10 +29,6 @@
             min-height: 100vh;
         }
 
-        .preview-scale-wrapper {
-            transform-origin: center;
-        }
-
         .post-container {
             width: 1080px;
             height: 1350px;
@@ -37,22 +37,41 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
+            box-shadow: 0 50px 100px rgba(0,0,0,0.9);
+        }
+
+        /* PREMIUM BACKGROUND LOGO */
+        .logo-blended {
+            position: absolute;
+            bottom: -150px;
+            left: 7%;
+            transform: translateX(-50%);
+            width: 1400px;
+            height: 1000px;
+            background-image: url('https://i.ibb.co/qMZ7cskj/output-onlinepngtools-1.jpg');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center bottom;
+            filter: sepia(1) saturate(5) hue-rotate(-15deg) brightness(0.6) contrast(1.2);
+            mix-blend-mode: screen; 
+            opacity: 0.15;
+            z-index: 2;
         }
 
         .texture-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background-image: url('https://www.transparenttextures.com/patterns/stardust.png');
-            opacity: 0.4;
+            opacity: 0.3;
             pointer-events: none;
-            z-index: 2;
+            z-index: 3;
         }
 
-        /* HERO IMAGE SECTION with DOUBLE GRADIENTS */
+        /* HERO IMAGE SECTION */
         .image-section {
             width: 100%;
             height: 520px; 
             position: relative;
-            z-index: 1;
+            z-index: 4;
         }
         .movie-img {
             width: 100%; height: 100%;
@@ -75,9 +94,7 @@
         /* OVERLAYED HEADER */
         .rec-header {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
+            top: 0; left: 0; width: 100%;
             height: 120px;
             display: flex;
             justify-content: space-between;
@@ -96,15 +113,6 @@
             text-transform: uppercase;
             letter-spacing: 3px;
         }
-        .rec-count {
-            font-family: var(--font-display);
-            font-size: 38px;
-            font-weight: 700;
-            color: var(--cinema-yellow);
-            padding: 2px 18px;
-            border-radius: 8px;
-            border: 4px solid var(--cinema-yellow);
-        }
 
         /* DATA CONTAINER */
         .data-container {
@@ -112,11 +120,11 @@
             padding: 0 60px 40px 60px;
             display: flex;
             flex-direction: column;
-            z-index: 10;
+            position: relative;
+            z-index: 10; 
             margin-top: -40px; 
         }
 
-        /* TOP SECTION logic */
         .top-info-split {
             display: flex;
             gap: 40px;
@@ -124,24 +132,17 @@
             align-items: flex-start;
         }
 
-        .left-info-col {
-            flex: 1.4;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* Condition for 100% width when screenshots are missing */
-        .left-info-col.full-width {
-            flex: 1;
-        }
+        .left-info-col { flex: 1.4; display: flex; flex-direction: column; }
+        .left-info-col.full-width { flex: 1; }
 
         .movie-title {
             font-family: var(--font-display);
-            font-size: 95px;
+            font-size: var(--title-size-val);
             line-height: 0.85;
             color: var(--text-light);
             text-transform: uppercase;
             margin-bottom: 20px;
+            text-shadow: 0 5px 15px rgba(0,0,0,0.5);
         }
 
         .quick-stats {
@@ -168,11 +169,7 @@
             text-transform: uppercase;
         }
 
-        .mini-info-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
+        .mini-info-grid { display: flex; flex-direction: column; gap: 20px; }
         .label {
             color: var(--cinema-yellow);
             font-family: var(--font-display);
@@ -188,51 +185,48 @@
             line-height: 1.2;
         }
 
-        /* RIGHT COLUMN: 2 Stacked Images */
-        .right-gallery-col {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
+        /* RIGHT GALLERY */
+        .right-gallery-col { flex: 1; display: flex; flex-direction: column; gap: 15px; }
         .gallery-frame {
-            width: 100%;
-            height: 200px; 
+            width: 100%; height: 200px; 
             border: 3px solid var(--cinema-yellow);
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            background: #000;
         }
-        .gallery-frame img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+        .gallery-frame img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* BOTTOM SECTION */
-        .plot-container {
-            width: 100%;
-            margin-top: auto;
-            margin-bottom: 30px;
-        }
+        /* BOTTOM PLOT */
+        .plot-container { width: 100%; margin-top: auto; margin-bottom: 30px; }
         .plot-text {
             font-family: var(--font-main);
             color: #FFF;
-            font-size: 32px;
+            font-size: var(--desc-size-val);
             line-height: 1.5;
             border-left: 8px solid var(--cinema-yellow);
             padding-left: 35px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+
+        .footer-branding {
+            display: flex;
+            justify-content: flex-end;
+            width: 100%;
         }
 
         .handle {
-            text-align: right;
             color: var(--cinema-yellow);
             font-family: var(--font-display);
             font-size: 28px;
             letter-spacing: 5px;
             text-transform: uppercase;
             font-weight: 700;
-            opacity: 0.6;
+            opacity: 0.4;
+        }
+
+        .highlight {
+            color: var(--cinema-yellow);
         }
     </style>
 </head>
@@ -242,7 +236,7 @@
     Handlebars.registerHelper("highlight", function (text) {
       if (!text) return "";
       return new Handlebars.SafeString(
-        text.replace(/\|(.*?)\|/g, '<span style="color: var(--cinema-yellow);">$1</span>')
+        text.replace(/\|(.*?)\|/g, '<span class="highlight">$1</span>')
       );
     });
   }
@@ -250,11 +244,12 @@
 
 <body>
 
-<div class="preview-scale-wrapper">
     <div class="post-container">
+        <!-- Premium Layers -->
+        <div class="logo-blended"></div>
         <div class="texture-overlay"></div>
 
-        <!-- Hero Section with Overlaid Header -->
+        <!-- Hero Section -->
         <div class="image-section">
             <div class="gradient-top"></div>
             
@@ -263,7 +258,6 @@
                     <svg class="rec-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
                     <span class="rec-text">Movie Recommendation</span>
                 </div>
-                <div class="rec-count">{{number}}</div>
             </div>
 
             <img src="{{main_image}}" class="movie-img" alt="Movie Hero">
@@ -271,11 +265,11 @@
             <div class="gradient-bottom"></div>
         </div>
 
+        <!-- Content Area -->
         <div class="data-container">
             
             <div class="top-info-split">
-                
-                <!-- If screenshots are empty, we add 'full-width' class -->
+                <!-- Conditional full-width class if no screenshots -->
                 <div class="left-info-col {{#unless screenshots}}full-width{{/unless}}">
                     <h1 class="movie-title">{{{highlight movie_name}}}</h1>
 
@@ -303,7 +297,6 @@
                     </div>
                 </div>
 
-                <!-- Only render the gallery if screenshots exist -->
                 {{#if screenshots}}
                 <div class="right-gallery-col">
                     {{#each screenshots}}
@@ -313,7 +306,6 @@
                     {{/each}}
                 </div>
                 {{/if}}
-
             </div>
 
             <div class="plot-container">
@@ -322,11 +314,12 @@
                 </p>
             </div>
             
-            <div class="handle">@cinefriendsofficial</div>
+            <div class="footer-branding">
+                <div class="handle">@cinefriendsofficial</div>
+            </div>
 
         </div>
     </div>
-</div>
 
 </body>
 </html>

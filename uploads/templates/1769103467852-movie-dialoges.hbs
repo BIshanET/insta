@@ -59,7 +59,7 @@
             z-index: 1;
         }
 
-        /* --- VERTICAL SIDEBAR --- */
+        /* --- VERTICAL SIDEBAR (Conditional) --- */
         .sidebar {
             width: 140px;
             height: 100%;
@@ -94,19 +94,20 @@
             gap: 45px; 
             position: relative;
             z-index: 10;
-            /* Centers the cards vertically if they don't fill the screen */
             justify-content: center; 
+        }
+
+        /* Center padding adjustment if Sidebar is hidden */
+        .content-area.full-width {
+            padding: 60px;
         }
 
         .dialogue-card {
             flex: 1;
             position: relative;
             width: 100%;
-            /* PREVENTS images from becoming too tall when there are only 1 or 2 */
             max-height: 520px; 
-            /* Minimum height to ensure it doesn't look like a tiny strip */
             min-height: 320px;
-            
             border: 6px solid var(--cinema-yellow);
             border-radius: 4px;
             overflow: hidden;
@@ -148,7 +149,8 @@
             text-shadow: 2px 2px 4px rgba(0,0,0,0.9);
         }
 
-        .subtitle-text span {
+        /* Standard Highlight class: White text for subtitles */
+        .highlight {
             color: var(--text-light);
         }
 
@@ -170,12 +172,12 @@
 </head>
 
 <script>
-  // Handlebars Helper for |highlighting|
+  // Standard Handlebars Helper for |highlighting|
   if (window.Handlebars) {
     Handlebars.registerHelper("highlight", function (text) {
       if (!text) return "";
       return new Handlebars.SafeString(
-        text.replace(/\|(.*?)\|/g, '<span>$1</span>')
+        text.replace(/\|(.*?)\|/g, '<span class="highlight">$1</span>')
       );
     });
   }
@@ -187,22 +189,22 @@
         <div class="texture-overlay"></div>
         <div class="logo-blended"></div>
 
+        <!-- Sidebar renders only if variable is provided -->
+        {{#if sidebar_title}}
         <div class="sidebar">
-            <h2 class="sidebar-text">
-                {{#if sidebar_title}}{{sidebar_title}}{{else}}Cinematic Dialogue{{/if}}
-            </h2>
+            <h2 class="sidebar-text">{{sidebar_title}}</h2>
         </div>
+        {{/if}}
 
-        <div class="content-area">
+        <div class="content-area {{#unless sidebar_title}}full-width{{/unless}}">
             
             {{#each texts}}
             <div class="dialogue-card">
-                <!-- Look up image from 'images' array at current index -->
+                <!-- Image lookup by index -->
                 <img src="{{lookup ../images @index}}" class="card-img" alt="Movie Frame">
                 
                 <div class="subtitle-gradient"></div>
                 <div class="subtitle-content">
-                    <!-- Triple braces used to render the <span> from the helper -->
                     <p class="subtitle-text">{{{highlight this}}}</p>
                 </div>
             </div>

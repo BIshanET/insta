@@ -112,7 +112,7 @@
             overflow: hidden;
             box-shadow: 0 20px 40px rgba(0,0,0,0.5);
             background-color: #000;
-            max-height: 520px; /* Prevents cards from being too tall with fewer items */
+            max-height: 520px; 
         }
 
         .card-img {
@@ -159,6 +159,11 @@
             letter-spacing: 4px;
         }
 
+        /* Standard Highlight Styling */
+        .highlight {
+            color: var(--cinema-yellow);
+        }
+
         /* Handle Branding */
         .handle {
             position: absolute;
@@ -172,15 +177,11 @@
             opacity: 0.4;
             z-index: 100;
         }
-
-        .highlight {
-            color: var(--cinema-yellow);
-        }
-
     </style>
 </head>
 
 <script>
+  // Handlebars Helper for |highlighting| - Matching Recommendation Template
   if (window.Handlebars) {
     Handlebars.registerHelper("highlight", function (text) {
       if (!text) return "";
@@ -209,14 +210,16 @@
             
             {{#each quotes}}
             <div class="quote-card">
-                <!-- Background lookup -->
+                <!-- Image lookup -->
                 <img src="{{lookup ../images @index}}" class="card-img" alt="Scene">
                 
                 <div class="card-gradient"></div>
                 
                 <div class="card-content">
+                    <!-- Triple braces render the span from the highlight helper -->
                     <p class="quote-text">{{{highlight this}}}</p>
-                    <!-- Movie name lookup -->
+                    
+                    <!-- Movie lookup -->
                     <p class="quote-movie">{{lookup ../movies @index}}</p>
                 </div>
             </div>

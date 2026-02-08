@@ -37,7 +37,6 @@
             align-items: center;
             overflow: hidden;
             box-shadow: 0 50px 100px rgba(0,0,0,0.8);
-            justify-content: space-around;
         }
 
         /* Background Layer - left center position */
@@ -85,7 +84,8 @@
         .post-title {
             font-family: var(--font-display);
             color: var(--text-light);
-            font-size: 50px; 
+            /* Added dynamic title_size */
+            font-size: {{#if title_size}}{{title_size}}{{else}}50px{{/if}}; 
             text-transform: uppercase;
             letter-spacing: 0.5px;
             line-height: 1.2; 
@@ -163,7 +163,8 @@
 
         .post-description {
             color: var(--text-light);
-            font-size: 28px;
+            /* Added dynamic description_size */
+            font-size: {{#if description_size}}{{description_size}}{{else}}28px{{/if}};
             line-height: 1.5;
             font-weight: 400;
         }
@@ -233,7 +234,6 @@
         </div>
         {{/if}}
 
-        <div class="footer-brand">@cinefriendsofficial</div>
     </div>
 
 </body>

@@ -40,6 +40,23 @@ const PROMPT_TEMPLATES: Record<string, string> = {
     - Return ONLY valid JSON.
     - If you cannot find high-quality image URLs, provide an empty string for coverImage.
     - No markdown formatting, no code blocks, just the raw JSON string.
+  `,
+   highlight_text: `
+    Analyze the following text: "{{text}}".
+    Identify the most important words or phrases that define the subject, emotion, or core meaning of the sentence. 
+    Wrap these specific words or phrases with | pipes | (e.g., "this movie was | breathtaking |").
+    
+    Return a JSON object following this EXACT structure:
+    {
+      "original_text": "{{text}}",
+      "highlighted_text": "The sentence with | pipes | around the key words"
+    }
+
+    Rules:
+    - Focus on nouns, adjectives, or entities that provide context.
+    - Keep the rest of the sentence structure identical.
+    - Return ONLY valid JSON.
+    - No markdown formatting, no code blocks, just the raw JSON string.
   `
 };
 

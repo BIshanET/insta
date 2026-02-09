@@ -20,7 +20,7 @@ export async function POST(
 ) {
   let browser;
   try {
-    if (process.env.VERCEL === "1") {
+    if (process.env.VERCEL4444 === "1") {
       const config = await prisma.systemConfig.findUnique({
         where: { key: "NGROK_URL" },
       });

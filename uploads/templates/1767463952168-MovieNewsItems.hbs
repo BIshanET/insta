@@ -149,9 +149,9 @@
             font-weight: 400; 
             opacity: 0.9;
         }
-        .description span {
+
+         .highlight {
             color: var(--cinema-yellow);
-            font-weight: 700;
         }
     </style>
 </head>
@@ -176,7 +176,7 @@
 
             <!-- News Title (Triple braces for HTML highlighting) -->
             <h1 class="news-title">
-                {{{newsTitle}}}
+                {{{highlight newsTitle}}}
             </h1>
 
             <!-- Image Section -->
@@ -195,7 +195,7 @@
             <!-- Description Section (Triple braces for HTML highlighting) -->
             <div class="info-card">
                 <p class="description">
-                    {{{newsDescription}}}
+                    {{{highlight  newsDescription}}}
                 </p>
             </div>
         </div>

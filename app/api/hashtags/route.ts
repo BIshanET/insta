@@ -18,7 +18,7 @@ Caption:
 Requirements:
 - If the caption has multiple words, make sure hashtags cover all important keywords.
 - If it is a single word, generate related and trending hashtags for that word.
-- Return exactly 40 hashtags.
+- Return exactly 30 hashtags.
 - Only return hashtags.
 - Space separated.
 - No explanation.

@@ -3,145 +3,206 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cinefriends Music Reel - HBS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --cinema-brown: #2C1810;
+            --cinema-yellow: #FFB300;
+            --text-light: #F5F5F5;
+            --text-dim: rgba(245, 245, 245, 0.6);
+            --font-main: 'Inter', sans-serif;
+            --font-display: 'Oswald', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
-            margin: 0;
-            padding: 0;
-            background-color: #1a1a1a;
+            background-color: #120a07;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            font-family: 'Helvetica Neue', Arial, sans-serif;
+            font-family: var(--font-main);
         }
 
+        /* --- REEL CANVAS (1080x1920) --- */
         .reel-canvas {
             width: 1080px;
             height: 1920px;
-            background: radial-gradient(circle at center, #F7F0E9 0%, #DED2C5 60%, #A39688 100%);
+            background-color: var(--cinema-brown);
+            position: relative;
+            overflow: hidden;
             display: flex;
             flex-direction: column;
             align-items: center;
-            position: relative;
+            box-shadow: 0 50px 100px rgba(0,0,0,0.8);
+        }
+
+        /* PREMIUM BRANDING LAYERS */
+        .texture-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('https://www.transparenttextures.com/patterns/stardust.png');
+            opacity: 0.3;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .logo-blended {
+            position: absolute;
+            right: -613px;
+            width: 1890px;
+            height: 1250px;
+            background-image: url('https://i.ibb.co/qMZ7cskj/output-onlinepngtools-1.jpg');
+            background-size: contain;
+            background-repeat: no-repeat;
+            filter: sepia(1) saturate(3) brightness(0.4) contrast(1.2);
+            mix-blend-mode: screen;
+            opacity: 0.15;
+            z-index: 1;
+            top: 810px;
         }
 
         .safe-zone-content {
             width: 850px;
-            margin-top: 350px;
+            margin-top: 150px; 
             display: flex;
             flex-direction: column;
+            position: relative;
+            z-index: 10;
         }
 
+        /* HEADER SECTION */
         .header {
             display: flex;
             align-items: center;
-            margin-bottom: 50px;
-            gap: 25px;
+            margin-bottom: 70px;
+            gap: 35px;
         }
 
         .art-box {
-            width: 200px;
-            height: 200px;
-            border-radius: 30px;
+            width: 240px;
+            height: 240px;
+            border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
-            background: url('{{coverImage}}');
+            border: 4px solid var(--cinema-yellow);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
             background-size: cover;
             background-position: center;
         }
 
         .header-text h1 {
-            color: #B6371A;
-            font-size: 70px;
+            color: var(--cinema-yellow);
+            font-family: var(--font-display);
+            font-size: 85px;
             margin: 0;
             line-height: 0.9;
-            font-weight: 800;
+            font-weight: 700;
+            text-transform: uppercase;
         }
 
         .header-text .label {
-            font-size: 24px;
+            font-size: 28px;
             font-weight: 800;
-            margin-top: 20px;
-            color: #1a1a1a;
+            margin-top: 15px;
+            color: var(--text-light);
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 6px;
+            opacity: 0.8;
         }
 
+        /* SONG LIST SECTION */
         .song-list {
-            border-top: 2px solid rgba(0,0,0,0.06);
+            border-top: 2px solid rgba(255, 179, 0, 0.2);
         }
 
         .song-row {
             display: flex;
             align-items: center;
-            padding: 35px 0;
-            border-bottom: 2px solid rgba(0,0,0,0.06);
+            padding: 45px 0;
+            border-bottom: 2px solid rgba(255, 179, 0, 0.1);
         }
 
         .play-circle {
-            width: 70px;
-            height: 70px;
-            background: #B6371A;
+            width: 80px;
+            height: 80px;
+            background: var(--cinema-yellow);
             border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-right: 30px;
+            margin-right: 35px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
         }
 
-        .play-circle svg { width: 35px; fill: white; margin-left: 5px; }
+        .play-circle svg { width: 40px; fill: var(--cinema-brown); margin-left: 5px; }
 
         .song-meta { flex-grow: 1; }
 
         .song-title {
-            font-size: 34px;
+            font-size: 38px;
             font-weight: 700;
-            color: #1a1a1a;
-            margin-bottom: 5px;
+            color: var(--text-light);
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
         }
 
         .song-artist {
-            font-size: 26px;
-            color: #666;
+            font-size: 28px;
+            color: var(--cinema-yellow);
+            font-family: var(--font-display);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.9;
         }
 
         .actions {
             display: flex;
             align-items: center;
-            gap: 25px;
-            padding-right: 20px;
+            gap: 30px;
+            padding-right: 10px;
         }
 
-        .heart svg { width: 40px; fill: #B6371A; }
-        .more { display: flex; gap: 6px; }
-        .dot { width: 8px; height: 8px; background: #333; border-radius: 50%; }
+        .heart svg { width: 45px; fill: var(--cinema-yellow); filter: drop-shadow(0 0 10px rgba(255,179,0,0.3)); }
+        
+        .more { display: flex; gap: 8px; }
+        .dot { width: 10px; height: 10px; background: var(--cinema-yellow); border-radius: 50%; opacity: 0.5; }
 
+        /* FOOTER BRANDING */
         .footer-logo {
             position: absolute;
-            bottom: 450px;
+            bottom: 120px;
             width: 100%;
             text-align: center;
-            font-size: 28px;
-            color: rgba(0,0,0,0.4);
-            letter-spacing: 4px;
+            font-family: var(--font-display);
+            font-size: 32px;
+            color: var(--cinema-yellow);
+            letter-spacing: 8px;
             text-transform: uppercase;
+            font-weight: 700;
+            opacity: 0.35;
+            z-index: 10;
         }
     </style>
 </head>
 <body>
 
     <div class="reel-canvas">
+        <div class="texture-overlay"></div>
+        <div class="logo-blended"></div>
+
         <div class="safe-zone-content">
             <!-- Header -->
             <div class="header">
-                <div class="art-box"></div>
+                <!-- Cover Image Dynamic -->
+                <div class="art-box" style="background-image: url('{{coverImage}}');"></div>
                 <div class="header-text">
                     <h1>{{headerTitle}}</h1>
                     <div class="label">Top Tracks</div>
                 </div>
             </div>
 
-            <!-- Song List -->
+            <!-- Song List Loop -->
             <div class="song-list">
                 {{#each songs}}
                 <div class="song-row">
@@ -150,7 +211,7 @@
                     </div>
                     <div class="song-meta">
                         <div class="song-title">{{this}}</div>
-                        <!-- Lookup artist from artists array at the current loop index -->
+                        <!-- Lookup artist from artists array at current index -->
                         <div class="song-artist">{{lookup ../artists @index}}</div>
                     </div>
                     <div class="actions">
@@ -166,7 +227,6 @@
             </div>
         </div>
 
-        <div class="footer-logo">@cinefriendsofficial</div>
     </div>
 
 </body>
